@@ -55,8 +55,8 @@ def create_cover_letter():
     p = doc.add_paragraph()
     run = p.add_run("Re: Submission of original manuscript — ")
     run.bold = True
-    run = p.add_run('"Flow Disruption and State Collapse: A Sensitivity Analysis of '
-                    'Technical Maritime Bans in Historical National Power Dynamics"')
+    run = p.add_run('"Network Exclusion and State Collapse: From Maritime Isolation to '
+                    'Technological Access Denial in the Long Run of History"')
     run.bold = True
 
     doc.add_paragraph()
@@ -68,50 +68,53 @@ def create_cover_letter():
 
     # Body
     doc.add_paragraph(
-        "We are pleased to submit the above-titled manuscript for consideration for publication "
-        "in Cliometrica. This manuscript has not been published elsewhere and is not under "
-        "consideration by any other journal. All authors have approved the manuscript and "
-        "agree with its submission to Cliometrica."
+        "We are pleased to submit the above-titled manuscript for consideration for "
+        "publication in Cliometrica. This manuscript has not been published elsewhere and "
+        "is not under consideration by any other journal. All authors have approved the "
+        "manuscript and agree with its submission to Cliometrica."
     )
 
     doc.add_paragraph(
-        "The manuscript examines the relationship between international flow disruption and "
-        "state collapse using a cross-historical dataset of 96 polities spanning six eras "
-        "from antiquity to the present. Our main contribution is twofold: (1) we introduce "
-        "the concept of 'technical maritime ban'—the passive isolation of polities due to "
-        "the absence of regular maritime routes, as distinct from deliberate policy-based "
-        "closures—and (2) we conduct a systematic sensitivity analysis to test whether the "
-        "observed association between maritime closure and conquest is robust to how isolation "
-        "is defined."
+        "The manuscript addresses a fundamental question in economic history: why does "
+        "exclusion from international exchange networks so reliably precede state collapse? "
+        "Using a comparative dataset of 96 historical polities spanning antiquity to the "
+        "present, we distinguish between deliberate closure (policy-based maritime bans, "
+        "sakoku) and what we term 'technical network exclusion'—involuntary disconnection "
+        "from the dominant exchange network of an era due to geographic or technological "
+        "constraints. We argue that the critical channel is technology flow: technically "
+        "excluded polities were severed not just from trade but from the diffusion of "
+        "military techniques, institutional innovations, and frontier knowledge."
     )
 
     doc.add_paragraph(
-        "Our key finding is that reclassifying seven historically isolated polities—including "
-        "the Han Dynasty, the Khmer Empire, and Kievan Rus'—from 'no closure' to 'technical "
-        "maritime ban' transforms a non-significant baseline association (Fisher's exact test "
-        "p = 0.187) into a statistically significant one (p = 0.020). Notably, all seven "
-        "technically isolated polities were eventually conquered (100% conquest rate). "
-        "Meanwhile, the core stock-flow confusion matrix odds ratio (OR = 1.774) remains "
-        "unchanged across all reclassification scenarios, suggesting that the mechanism "
-        "driving the closure-conquest association is flow disruption per se rather than "
-        "policy intent."
+        "Reclassifying seven technically excluded polities—including the Han Dynasty, "
+        "the Khmer Empire, and Kievan Rus'—transforms a non-significant baseline "
+        "association between closure and conquest (Fisher's exact test p = 0.187) into a "
+        "significant one (p = 0.020). All seven were eventually conquered. A dose–response "
+        "gradient emerges across closure types: technical exclusion (zero technology "
+        "transfer) shows a 100% conquest rate, policy bans (reduced but non-zero transfer) "
+        "show rates below 80%, and open polities show the lowest rates. The core stock–flow "
+        "odds ratio (OR = 1.774) remains invariant across all reclassification scenarios."
     )
 
     doc.add_paragraph(
-        "We believe this manuscript is well suited to Cliometrica for several reasons. First, "
-        "it combines quantitative methods (Fisher's exact test, multivariate logistic regression, "
-        "bootstrap validation) with a novel historical dataset, which aligns with the journal's "
-        "focus on econometric history and historical economics. Second, the 'technical maritime "
-        "ban' concept offers a new dimension to the long-standing debate on trade openness and "
-        "state survival, complementing seminal works by Findlay and O'Rourke (2007) and "
-        "Kennedy (1987). Third, the sensitivity analysis framework provides a replicable "
-        "template for other researchers working with categorical historical data."
+        "We believe this manuscript offers three features that may interest Cliometrica's "
+        "readership. First, it provides a quantitative restatement of the long-recognized "
+        "pattern that contact between civilizations at different technological levels tends "
+        "to end unfavorably for the less advanced party (Diamond 1997)—but grounded in a "
+        "systematic, cross-historical dataset rather than selective case studies. Second, "
+        "the technology-flow mechanism we propose generalizes beyond maritime isolation: as "
+        "the dominant network shifts from sea lanes to semiconductors, AI infrastructure, "
+        "and advanced robotics, the same logic of cumulative divergence through exclusion "
+        "may apply to contemporary states. Third, the sensitivity analysis framework "
+        "(3 reclassification levels × 2 outcome assignments = 6 scenarios) provides a "
+        "replicable template for other researchers working with categorical historical data."
     )
 
     doc.add_paragraph(
-        "The manuscript comprises approximately 8,000 words of body text, 3 tables, "
+        "The manuscript comprises approximately 8,500 words of body text, 3 tables, "
         "4 figures, and one supplementary table (Table S1) listing all 96 polities with "
-        "their modern-country equivalents, periods of existence, and specific turning-point "
+        "modern-country equivalents, periods of existence, and specific turning-point "
         "events. All data and code are available upon request."
     )
 
@@ -179,8 +182,8 @@ def create_strobe_checklist():
         level=1,
     )
     p = doc.add_paragraph(
-        'Applied to: "Flow Disruption and State Collapse: A Sensitivity Analysis of '
-        'Technical Maritime Bans in Historical National Power Dynamics"'
+        'Applied to: "Network Exclusion and State Collapse: From Maritime Isolation to '
+        'Technological Access Denial in the Long Run of History"'
     )
     p.runs[0].italic = True
 
@@ -192,7 +195,7 @@ def create_strobe_checklist():
         ("1(a)", "Title and abstract",
          "Indicate the study's design with a commonly used term in the title or the abstract",
          "Title page; Abstract",
-         'Title includes "Sensitivity Analysis"; Abstract describes cross-historical design (N=96 polities, six eras)'),
+         'Title indicates scope ("in the Long Run of History"); Abstract describes comparative historical design (N=96 polities, six eras)'),
 
         ("1(b)", "Title and abstract",
          "Provide in the abstract an informative and balanced summary of what was done and what was found",
@@ -207,7 +210,7 @@ def create_strobe_checklist():
         ("3", "Objectives",
          "State specific objectives, including any prespecified hypotheses",
          "Section 1 (Introduction), ¶3",
-         "Two objectives stated: (1) construct cross-historical dataset, (2) test robustness of closure-conquest association via reclassification"),
+         "Three contributions stated: (1) construct comparative dataset, (2) introduce technical network exclusion concept, (3) conduct sensitivity analysis"),
 
         ("4", "Study design",
          "Present key elements of study design early in the paper",
@@ -311,23 +314,23 @@ def create_strobe_checklist():
 
         ("18", "Key results",
          "Summarise key results with reference to study objectives",
-         "Section 6 (Discussion)",
-         "Technical maritime ban reclassification yields significant association (p=0.020); OR stable at 1.774; flow disruption mechanism supported"),
+         "Section 6.1–6.2 (Discussion)",
+         "Technology flow disruption as mechanism (6.1); dose–response gradient; first contact and civilizational divergence (6.2); OR stability (6.4)"),
 
         ("19", "Limitations",
          "Discuss limitations of the study, taking into account sources of potential bias or imprecision",
-         "Section 6 (Discussion)",
-         "Small-sample limitations (N=96); retrospective coding subjectivity; survivorship bias; quasi-separation in logistic regression"),
+         "Section 6.5",
+         "Small-sample (N=96); retrospective coding subjectivity; non-independence of sequential polities; disrupted-category ambiguity; speculative modern extension"),
 
         ("20", "Interpretation",
          "Give a cautious overall interpretation of results considering objectives, limitations, multiplicity of analyses, and results from similar studies",
-         "Section 6; Section 7",
-         "Results interpreted as supportive of flow-disruption mechanism; limitations acknowledged; consistency with Findlay & O'Rourke framework noted"),
+         "Section 6.1–6.3; Section 7",
+         "Technology flow disruption mechanism; extension to modern technological access exclusion (AI, semiconductors); cautious framing of forward-looking implications"),
 
         ("21", "Generalisability",
          "Discuss the generalisability (external validity) of the study results",
-         "Section 6",
-         "Acknowledged as limited to major historical polities; transferability to smaller polities or sub-state entities not tested"),
+         "Section 6.3; Section 6.5",
+         "Generalisation to modern technological exclusion discussed (6.3); limitations of extrapolation acknowledged (6.5); limited to major historical polities"),
 
         ("22", "Funding",
          "Give the source of funding and the role of the funders",
