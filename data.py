@@ -24,7 +24,7 @@ records = [
         "stock_index": 0.40,         # 自然資本◎、制度資本○、人的資本△
         "trade_openness": 0.70,      # 王の道、交易路開放
         "closure_type": "none",
-        "outcome": "conquered",      # アレクサンドロスに征服
+        "outcome": "overtaken",      # アレクサンドロスに征服
         "geo_barrier": 0.4,          # 平原が多い、防御困難
         "external_threat": 0.8,      # ギリシア・マケドニアの軍事革新
         "relative_pop": 0.9,         # 当時最大の人口
@@ -42,7 +42,7 @@ records = [
         "stock_index": 0.45,
         "trade_openness": 0.80,
         "closure_type": "none",
-        "outcome": "conquered",      # マケドニアに征服
+        "outcome": "overtaken",      # マケドニアに征服
         "geo_barrier": 0.5,          # 海洋防御あるが半島は開放的
         "external_threat": 0.8,
         "relative_pop": 0.2,
@@ -60,7 +60,7 @@ records = [
         "stock_index": 0.65,          # 人的資本(軍事特化)◎、制度◎、自然資本△
         "trade_openness": 0.15,
         "closure_type": "maritime_ban",
-        "outcome": "conquered",       # ローマに征服
+        "outcome": "overtaken",       # ローマに征服
         "geo_barrier": 0.5,
         "external_threat": 0.7,
         "relative_pop": 0.1,
@@ -78,7 +78,7 @@ records = [
         "stock_index": 0.35,
         "trade_openness": 0.90,
         "closure_type": "none",
-        "outcome": "conquered",
+        "outcome": "overtaken",
         "geo_barrier": 0.5,
         "external_threat": 0.9,
         "relative_pop": 0.3,
@@ -114,7 +114,7 @@ records = [
         "stock_index": 0.60,           # インフラ蓄積あるが減耗中
         "trade_openness": 0.35,
         "closure_type": "maritime_ban",
-        "outcome": "conquered",
+        "outcome": "overtaken",
         "geo_barrier": 0.3,
         "external_threat": 0.9,
         "relative_pop": 0.5,
@@ -132,7 +132,7 @@ records = [
         "stock_index": 0.55,           # 農業◎、文化◎
         "trade_openness": 0.70,
         "closure_type": "none",
-        "outcome": "conquered",        # ローマに征服
+        "outcome": "overtaken",        # ローマに征服
         "geo_barrier": 0.6,            # 砂漠に囲まれるが海側開放
         "external_threat": 0.8,
         "relative_pop": 0.4,
@@ -150,7 +150,7 @@ records = [
         "stock_index": 0.65,           # 人的◎、制度◎、農業◎
         "trade_openness": 0.55,
         "closure_type": "none",
-        "outcome": "conquered",        # 内乱→三国分裂（体制崩壊）
+        "outcome": "overtaken",        # 内乱→三国分裂（体制崩壊）
         "geo_barrier": 0.6,
         "external_threat": 0.5,
         "relative_pop": 0.95,
@@ -187,7 +187,7 @@ records = [
         "stock_index": 0.55,
         "trade_openness": 0.30,
         "closure_type": "maritime_ban",
-        "outcome": "conquered",          # オスマンに征服
+        "outcome": "overtaken",          # オスマンに征服
         "geo_barrier": 0.7,
         "external_threat": 0.9,
         "relative_pop": 0.1,
@@ -223,7 +223,7 @@ records = [
         "stock_index": 0.50,
         "trade_openness": 0.35,
         "closure_type": "none",
-        "outcome": "conquered",           # モンゴルに征服
+        "outcome": "overtaken",           # モンゴルに征服
         "geo_barrier": 0.3,
         "external_threat": 0.95,
         "relative_pop": 0.3,
@@ -241,7 +241,7 @@ records = [
         "stock_index": 0.75,              # 人的◎、技術◎、制度◎、文化◎
         "trade_openness": 0.60,           # 海上交易は活発
         "closure_type": "none",
-        "outcome": "conquered",           # モンゴルに征服
+        "outcome": "overtaken",           # モンゴルに征服
         "geo_barrier": 0.4,
         "external_threat": 0.95,
         "relative_pop": 0.8,
@@ -259,7 +259,7 @@ records = [
         "stock_index": 0.20,
         "trade_openness": 0.85,
         "closure_type": "none",
-        "outcome": "conquered",            # 分裂・崩壊
+        "outcome": "overtaken",            # 分裂・崩壊
         "geo_barrier": 0.1,
         "external_threat": 0.3,
         "relative_pop": 0.15,
@@ -277,7 +277,7 @@ records = [
         "stock_index": 0.50,
         "trade_openness": 0.65,
         "closure_type": "none",
-        "outcome": "conquered",            # オスマンに征服
+        "outcome": "overtaken",            # オスマンに征服
         "geo_barrier": 0.5,
         "external_threat": 0.8,
         "relative_pop": 0.3,
@@ -295,7 +295,7 @@ records = [
         "stock_index": 0.40,
         "trade_openness": 0.95,
         "closure_type": "none",
-        "outcome": "conquered",
+        "outcome": "overtaken",
         "geo_barrier": 0.7,               # 潟の上
         "external_threat": 0.7,
         "relative_pop": 0.05,
@@ -313,7 +313,7 @@ records = [
         "stock_index": 0.30,
         "trade_openness": 0.90,
         "closure_type": "none",
-        "outcome": "conquered",            # 領域国家に吸収
+        "outcome": "overtaken",            # 領域国家に吸収
         "geo_barrier": 0.2,
         "external_threat": 0.6,
         "relative_pop": 0.1,
@@ -350,7 +350,7 @@ records = [
         "stock_index": 0.55,
         "trade_openness": 0.30,
         "closure_type": "maritime_ban",
-        "outcome": "conquered",            # WWI後分割
+        "outcome": "disrupted",             # WWI後分割→トルコ共和国として存続
         "geo_barrier": 0.4,
         "external_threat": 0.9,
         "relative_pop": 0.3,
@@ -368,7 +368,7 @@ records = [
         "stock_index": 0.80,              # 人的◎、農業◎、制度◎、文化◎、インフラ◎
         "trade_openness": 0.15,
         "closure_type": "maritime_ban",    # 海禁令
-        "outcome": "conquered",            # 満州族に征服
+        "outcome": "overtaken",            # 満州族に征服
         "geo_barrier": 0.6,
         "external_threat": 0.7,
         "relative_pop": 0.95,
@@ -404,7 +404,7 @@ records = [
         "stock_index": 0.70,               # 減耗中だが依然巨大（人的資本、農業、文化）
         "trade_openness": 0.25,
         "closure_type": "maritime_ban",
-        "outcome": "conquered",             # 半植民地化
+        "outcome": "overtaken",             # 半植民地化
         "geo_barrier": 0.5,
         "external_threat": 0.9,
         "relative_pop": 0.90,
@@ -422,7 +422,7 @@ records = [
         "stock_index": 0.55,               # 制度◎(儒教)、農業○、人的資本△
         "trade_openness": 0.10,
         "closure_type": "sakoku",           # 隠者の国
-        "outcome": "conquered",             # 日本に併合
+        "outcome": "overtaken",             # 日本に併合
         "geo_barrier": 0.5,                 # 半島
         "external_threat": 0.8,
         "relative_pop": 0.2,
@@ -440,7 +440,7 @@ records = [
         "stock_index": 0.65,               # 人的◎(識字率高)、制度◎、文化◎、インフラ○
         "trade_openness": 0.05,
         "closure_type": "sakoku",
-        "outcome": "conquered",             # 強制開国→幕府崩壊
+        "outcome": "disrupted",              # 強制開国→幕府崩壊も国家として存続・近代化に成功
         "geo_barrier": 0.8,                 # 島国
         "external_threat": 0.7,
         "relative_pop": 0.3,
@@ -458,7 +458,7 @@ records = [
         "stock_index": 0.60,
         "trade_openness": 0.30,
         "closure_type": "none",
-        "outcome": "conquered",             # 英国に植民地化
+        "outcome": "overtaken",             # 英国に植民地化
         "geo_barrier": 0.5,
         "external_threat": 0.9,
         "relative_pop": 0.8,
@@ -476,7 +476,7 @@ records = [
         "stock_index": 0.55,
         "trade_openness": 0.35,
         "closure_type": "none",
-        "outcome": "conquered",              # アフガン人に征服
+        "outcome": "overtaken",              # アフガン人に征服
         "geo_barrier": 0.5,
         "external_threat": 0.7,
         "relative_pop": 0.3,
@@ -494,7 +494,7 @@ records = [
         "stock_index": 0.55,                # インフラ◎(道路網)、農業◎、制度○
         "trade_openness": 0.05,
         "closure_type": "maritime_ban",       # 自給自足閉鎖経済
-        "outcome": "conquered",
+        "outcome": "overtaken",
         "geo_barrier": 0.7,                  # 山岳
         "external_threat": 0.9,              # テクノロジーギャップ
         "relative_pop": 0.3,
@@ -512,7 +512,7 @@ records = [
         "stock_index": 0.50,
         "trade_openness": 0.10,
         "closure_type": "maritime_ban",
-        "outcome": "conquered",
+        "outcome": "overtaken",
         "geo_barrier": 0.4,
         "external_threat": 0.9,
         "relative_pop": 0.3,
@@ -530,7 +530,7 @@ records = [
         "stock_index": 0.30,
         "trade_openness": 0.90,
         "closure_type": "none",
-        "outcome": "conquered",              # スペイン同君連合
+        "outcome": "disrupted",               # スペイン同君連合→60年後独立回復
         "geo_barrier": 0.5,
         "external_threat": 0.7,
         "relative_pop": 0.05,
@@ -548,7 +548,7 @@ records = [
         "stock_index": 0.35,
         "trade_openness": 0.95,
         "closure_type": "none",
-        "outcome": "conquered",               # フランスに征服
+        "outcome": "disrupted",                # フランスに征服→後に独立回復
         "geo_barrier": 0.3,
         "external_threat": 0.8,
         "relative_pop": 0.05,
@@ -566,7 +566,7 @@ records = [
         "stock_index": 0.40,                   # フロー→ストック変換に失敗
         "trade_openness": 0.60,                # 重商主義だが交易は活発
         "closure_type": "none",
-        "outcome": "conquered",                # ナポレオンに征服→帝国崩壊
+        "outcome": "disrupted",                 # ナポレオンに征服→後に独立回復
         "geo_barrier": 0.6,
         "external_threat": 0.7,
         "relative_pop": 0.2,
@@ -712,7 +712,7 @@ records = [
         "stock_index": 0.60,                   # 人的◎、制度○、技術蓄積○、都市鉱山×
         "trade_openness": 0.20,
         "closure_type": "bloc",
-        "outcome": "conquered",
+        "outcome": "disrupted",                  # WWII敗戦→占領→独立回復
         "geo_barrier": 0.7,
         "external_threat": 0.9,
         "relative_pop": 0.3,
@@ -730,7 +730,7 @@ records = [
         "stock_index": 0.70,                   # 技術◎、人的◎、インフラ◎
         "trade_openness": 0.15,
         "closure_type": "bloc",                # アウタルキー
-        "outcome": "conquered",
+        "outcome": "disrupted",                  # 占領→分割→独立回復
         "geo_barrier": 0.2,                    # 平原に囲まれる
         "external_threat": 0.9,
         "relative_pop": 0.3,
@@ -748,7 +748,7 @@ records = [
         "stock_index": 0.50,
         "trade_openness": 0.20,
         "closure_type": "bloc",
-        "outcome": "conquered",
+        "outcome": "disrupted",                  # WWII敗戦→国家として存続
         "geo_barrier": 0.5,
         "external_threat": 0.8,
         "relative_pop": 0.2,
@@ -766,7 +766,7 @@ records = [
         "stock_index": 0.75,                   # 自然◎、人的○、技術○、インフラ○、軍事◎
         "trade_openness": 0.10,
         "closure_type": "bloc",                # COMECON
-        "outcome": "conquered",                # 体制崩壊
+        "outcome": "disrupted",                 # 内部崩壊→後継国家独立
         "geo_barrier": 0.6,
         "external_threat": 0.8,
         "relative_pop": 0.6,
@@ -784,7 +784,7 @@ records = [
         "stock_index": 0.55,
         "trade_openness": 0.15,
         "closure_type": "bloc",
-        "outcome": "conquered",                # 体制崩壊
+        "outcome": "disrupted",                 # 統一→ドイツとして存続
         "geo_barrier": 0.1,
         "external_threat": 0.7,
         "relative_pop": 0.1,
@@ -802,7 +802,7 @@ records = [
         "stock_index": 0.45,
         "trade_openness": 0.30,
         "closure_type": "bloc",                # 非同盟だが計画経済的
-        "outcome": "conquered",                # 内戦→崩壊
+        "outcome": "disrupted",                 # 内部崩壊→後継国家独立
         "geo_barrier": 0.5,
         "external_threat": 0.5,
         "relative_pop": 0.1,
@@ -1003,7 +1003,7 @@ records = [
         "stock_index": 0.45,
         "trade_openness": 0.70,
         "closure_type": "none",
-        "outcome": "conquered",          # ローマに征服
+        "outcome": "overtaken",          # ローマに征服
         "geo_barrier": 0.3,
         "external_threat": 0.8,
         "relative_pop": 0.2,
@@ -1021,7 +1021,7 @@ records = [
         "stock_index": 0.40,
         "trade_openness": 0.65,
         "closure_type": "none",
-        "outcome": "conquered",          # ローマに征服
+        "outcome": "overtaken",          # ローマに征服
         "geo_barrier": 0.3,
         "external_threat": 0.8,
         "relative_pop": 0.3,
@@ -1039,7 +1039,7 @@ records = [
         "stock_index": 0.45,
         "trade_openness": 0.65,
         "closure_type": "none",
-        "outcome": "conquered",          # ササン朝に征服
+        "outcome": "overtaken",          # ササン朝に征服
         "geo_barrier": 0.4,
         "external_threat": 0.7,
         "relative_pop": 0.4,
@@ -1057,7 +1057,7 @@ records = [
         "stock_index": 0.60,
         "trade_openness": 0.40,
         "closure_type": "none",
-        "outcome": "conquered",          # アラブ・イスラーム征服
+        "outcome": "overtaken",          # アラブ・イスラーム征服
         "geo_barrier": 0.4,
         "external_threat": 0.9,
         "relative_pop": 0.4,
@@ -1075,7 +1075,7 @@ records = [
         "stock_index": 0.35,
         "trade_openness": 0.75,
         "closure_type": "none",
-        "outcome": "conquered",          # ササン朝・グプタ朝に征服
+        "outcome": "overtaken",          # ササン朝・グプタ朝に征服
         "geo_barrier": 0.3,
         "external_threat": 0.7,
         "relative_pop": 0.3,
@@ -1093,7 +1093,7 @@ records = [
         "stock_index": 0.60,
         "trade_openness": 0.60,
         "closure_type": "none",
-        "outcome": "conquered",          # フン族侵入で崩壊
+        "outcome": "overtaken",          # フン族侵入で崩壊
         "geo_barrier": 0.5,
         "external_threat": 0.8,
         "relative_pop": 0.6,
@@ -1112,7 +1112,7 @@ records = [
         "stock_index": 0.70,
         "trade_openness": 0.75,
         "closure_type": "none",
-        "outcome": "conquered",          # 安史の乱→内部崩壊
+        "outcome": "overtaken",          # 安史の乱→内部崩壊
         "geo_barrier": 0.5,
         "external_threat": 0.6,
         "relative_pop": 0.9,
@@ -1130,7 +1130,7 @@ records = [
         "stock_index": 0.40,
         "trade_openness": 0.70,
         "closure_type": "none",
-        "outcome": "conquered",          # アッバース革命で崩壊
+        "outcome": "overtaken",          # アッバース革命で崩壊
         "geo_barrier": 0.3,
         "external_threat": 0.6,
         "relative_pop": 0.5,
@@ -1148,7 +1148,7 @@ records = [
         "stock_index": 0.50,
         "trade_openness": 0.55,
         "closure_type": "none",
-        "outcome": "conquered",          # モンゴル侵攻→属国化→李朝に交代
+        "outcome": "overtaken",          # モンゴル侵攻→属国化→李朝に交代
         "geo_barrier": 0.5,
         "external_threat": 0.9,
         "relative_pop": 0.15,
@@ -1166,7 +1166,7 @@ records = [
         "stock_index": 0.60,
         "trade_openness": 0.30,
         "closure_type": "none",
-        "outcome": "conquered",          # アユタヤに陥落
+        "outcome": "overtaken",          # アユタヤに陥落
         "geo_barrier": 0.3,
         "external_threat": 0.7,
         "relative_pop": 0.3,
@@ -1184,7 +1184,7 @@ records = [
         "stock_index": 0.30,
         "trade_openness": 0.85,
         "closure_type": "none",
-        "outcome": "conquered",          # マジャパヒトに征服
+        "outcome": "overtaken",          # マジャパヒトに征服
         "geo_barrier": 0.5,
         "external_threat": 0.6,
         "relative_pop": 0.15,
@@ -1202,7 +1202,7 @@ records = [
         "stock_index": 0.45,
         "trade_openness": 0.70,
         "closure_type": "none",
-        "outcome": "conquered",          # イスラーム諸国に分裂
+        "outcome": "overtaken",          # イスラーム諸国に分裂
         "geo_barrier": 0.5,
         "external_threat": 0.6,
         "relative_pop": 0.2,
@@ -1220,7 +1220,7 @@ records = [
         "stock_index": 0.35,
         "trade_openness": 0.60,
         "closure_type": "none",
-        "outcome": "conquered",          # モンゴルに征服
+        "outcome": "overtaken",          # モンゴルに征服
         "geo_barrier": 0.1,
         "external_threat": 0.9,
         "relative_pop": 0.2,
@@ -1238,7 +1238,7 @@ records = [
         "stock_index": 0.35,
         "trade_openness": 0.90,
         "closure_type": "none",
-        "outcome": "conquered",          # ナポレオンに征服
+        "outcome": "overtaken",          # ナポレオンに征服
         "geo_barrier": 0.5,
         "external_threat": 0.6,
         "relative_pop": 0.03,
@@ -1256,7 +1256,7 @@ records = [
         "stock_index": 0.40,
         "trade_openness": 0.65,
         "closure_type": "none",
-        "outcome": "conquered",          # ソンガイ帝国に吸収
+        "outcome": "overtaken",          # ソンガイ帝国に吸収
         "geo_barrier": 0.4,
         "external_threat": 0.6,
         "relative_pop": 0.3,
@@ -1275,7 +1275,7 @@ records = [
         "stock_index": 0.55,
         "trade_openness": 0.80,
         "closure_type": "none",
-        "outcome": "conquered",          # 紅巾の乱→明朝に交代
+        "outcome": "overtaken",          # 紅巾の乱→明朝に交代
         "geo_barrier": 0.5,
         "external_threat": 0.4,
         "relative_pop": 0.8,
@@ -1293,7 +1293,7 @@ records = [
         "stock_index": 0.45,
         "trade_openness": 0.65,
         "closure_type": "none",
-        "outcome": "conquered",          # ウズベク族に征服
+        "outcome": "overtaken",          # ウズベク族に征服
         "geo_barrier": 0.2,
         "external_threat": 0.7,
         "relative_pop": 0.3,
@@ -1311,7 +1311,7 @@ records = [
         "stock_index": 0.25,
         "trade_openness": 0.85,
         "closure_type": "none",
-        "outcome": "conquered",          # 薩摩藩→日本に併合
+        "outcome": "overtaken",          # 薩摩藩→日本に併合
         "geo_barrier": 0.6,
         "external_threat": 0.8,
         "relative_pop": 0.01,
@@ -1329,7 +1329,7 @@ records = [
         "stock_index": 0.50,
         "trade_openness": 0.40,
         "closure_type": "none",
-        "outcome": "conquered",          # 三度の分割
+        "outcome": "overtaken",          # 三度の分割
         "geo_barrier": 0.1,              # 平原に囲まれる
         "external_threat": 0.9,
         "relative_pop": 0.3,
@@ -1347,7 +1347,7 @@ records = [
         "stock_index": 0.40,
         "trade_openness": 0.60,
         "closure_type": "none",
-        "outcome": "conquered",          # 大北方戦争で敗北→帝国喪失
+        "outcome": "disrupted",           # 大北方戦争敗北も国家として存続
         "geo_barrier": 0.5,
         "external_threat": 0.8,
         "relative_pop": 0.1,
@@ -1365,7 +1365,7 @@ records = [
         "stock_index": 0.65,
         "trade_openness": 0.30,
         "closure_type": "none",
-        "outcome": "conquered",          # 革命で崩壊
+        "outcome": "disrupted",           # 革命→ソ連→ロシアとして存続
         "geo_barrier": 0.6,
         "external_threat": 0.7,
         "relative_pop": 0.7,
@@ -1402,7 +1402,7 @@ records = [
         "stock_index": 0.20,
         "trade_openness": 0.70,
         "closure_type": "none",
-        "outcome": "conquered",          # 米国に併合
+        "outcome": "overtaken",          # 米国に併合
         "geo_barrier": 0.7,
         "external_threat": 0.8,
         "relative_pop": 0.01,
@@ -1420,7 +1420,7 @@ records = [
         "stock_index": 0.30,
         "trade_openness": 0.10,
         "closure_type": "maritime_ban",
-        "outcome": "conquered",          # 英国に征服
+        "outcome": "overtaken",          # 英国に征服
         "geo_barrier": 0.3,
         "external_threat": 0.9,
         "relative_pop": 0.05,
@@ -1438,7 +1438,7 @@ records = [
         "stock_index": 0.40,
         "trade_openness": 0.25,
         "closure_type": "none",
-        "outcome": "conquered",          # 英国に植民地化
+        "outcome": "overtaken",          # 英国に植民地化
         "geo_barrier": 0.5,
         "external_threat": 0.8,
         "relative_pop": 0.15,
@@ -1456,7 +1456,7 @@ records = [
         "stock_index": 0.60,
         "trade_openness": 0.40,
         "closure_type": "bloc",          # 帝国内ブロック
-        "outcome": "conquered",          # WWI敗北→解体
+        "outcome": "disrupted",           # WWI敗北→解体も後継国家存続
         "geo_barrier": 0.3,
         "external_threat": 0.8,
         "relative_pop": 0.3,
@@ -1511,7 +1511,7 @@ records = [
         "stock_index": 0.60,
         "trade_openness": 0.20,
         "closure_type": "bloc",
-        "outcome": "conquered",          # 対仏大同盟に敗北
+        "outcome": "disrupted",           # 対仏大同盟に敗北→フランスとして存続
         "geo_barrier": 0.3,
         "external_threat": 0.9,
         "relative_pop": 0.4,
@@ -1529,7 +1529,7 @@ records = [
         "stock_index": 0.40,
         "trade_openness": 0.20,
         "closure_type": "maritime_ban",
-        "outcome": "conquered",          # 日本に併合
+        "outcome": "overtaken",          # 日本に併合
         "geo_barrier": 0.5,
         "external_threat": 0.9,
         "relative_pop": 0.1,
@@ -1547,7 +1547,7 @@ records = [
         "stock_index": 0.40,
         "trade_openness": 0.15,
         "closure_type": "bloc",
-        "outcome": "conquered",          # ソ連侵攻で崩壊
+        "outcome": "overtaken",          # ソ連侵攻で崩壊
         "geo_barrier": 0.2,
         "external_threat": 0.9,
         "relative_pop": 0.1,
@@ -1565,7 +1565,7 @@ records = [
         "stock_index": 0.30,
         "trade_openness": 0.50,
         "closure_type": "none",
-        "outcome": "conquered",          # 北ベトナムに征服
+        "outcome": "overtaken",          # 北ベトナムに征服
         "geo_barrier": 0.3,
         "external_threat": 0.9,
         "relative_pop": 0.1,
@@ -1583,7 +1583,7 @@ records = [
         "stock_index": 0.55,
         "trade_openness": 0.20,
         "closure_type": "bloc",
-        "outcome": "conquered",          # ビロード革命で体制崩壊
+        "outcome": "disrupted",           # ビロード革命→平和的独立
         "geo_barrier": 0.3,
         "external_threat": 0.5,
         "relative_pop": 0.05,
@@ -1601,7 +1601,7 @@ records = [
         "stock_index": 0.50,
         "trade_openness": 0.20,
         "closure_type": "bloc",
-        "outcome": "conquered",          # 連帯運動→体制崩壊
+        "outcome": "disrupted",           # 連帯運動→民主化・独立存続
         "geo_barrier": 0.1,
         "external_threat": 0.5,
         "relative_pop": 0.1,
@@ -1619,7 +1619,7 @@ records = [
         "stock_index": 0.45,
         "trade_openness": 0.15,
         "closure_type": "bloc",
-        "outcome": "conquered",          # 革命で崩壊
+        "outcome": "disrupted",           # 革命→民主化・独立存続
         "geo_barrier": 0.4,
         "external_threat": 0.5,
         "relative_pop": 0.07,
@@ -1763,7 +1763,7 @@ def load_data():
     """DataFrameとして返す"""
     df = pd.DataFrame(records)
     df["dominant_binary"] = (df["dominant"] == "stock").astype(int)
-    df["outcome_binary"] = (df["outcome"] == "conquered").astype(int)
+    df["outcome_binary"] = (df["outcome"] == "overtaken").astype(int)
     # 中央値ベースの時代コード
     era_order = {
         "ancient": 0,

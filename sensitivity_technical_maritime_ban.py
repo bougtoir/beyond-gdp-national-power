@@ -1,36 +1,17 @@
 """
-感度分析: 技術的海禁政策 (Technical Maritime Ban)
+感度分析: 技術的海禁政策 × outcome再分類 (Technical Maritime Ban + Disrupted)
 
-定義:
-  定期的な航路が存在せず、冒険者・探検家のみが到達可能であった
-  時代・地域の国家を「技術的海禁政策」(technical_maritime_ban) として
-  再分類し、分析結果への影響を検証する。
+2つの感度軸:
+  軸1 — closure_type 再分類（技術的海禁）
+    A) ベースライン（変更なし）
+    B) 強い候補のみ再分類（5国）
+    C) 全候補再分類（7国）
 
-  ベースライン: 既存の closure_type 分類（政策的海禁のみ）
-  感度分析:    上記 + 技術的海禁を maritime_ban に再分類
+  軸2 — disrupted 18国の帰属
+    overtaken扱い: disrupted → overtaken（体制崩壊＝征服と見なす）
+    survived扱い:  disrupted → survived （国家存続＝生存と見なす）
 
-対象候補（closure_type="none" → "technical_maritime_ban"）:
-  ─ 強い候補（定期航路が明確に不在） ─
-  1. 漢朝（前漢〜後漢）: 古代東アジア。地中海世界との定期海路なし。
-     シルクロードは陸路のみ。海路は冒険的商人のみ。
-  2. マリ帝国: 中世サヘル地域。外部からの定期海路なし。
-     接触はサハラ縦断キャラバン交易のみ。
-  3. クメール帝国（アンコール）: 中世東南アジア内陸。
-     海岸部のシュリーヴィジャヤとは異なり、外洋からの直接航路なし。
-  4. キエフ大公国: 中世東欧。河川交易（ヴァリャーグ路）が主。
-     外洋からの定期航路なし。
-  5. ティムール朝: 近世中央アジア。完全内陸、海洋アクセスなし。
-
-  ─ 中程度の候補（航路の定期性が不確実） ─
-  6. ササン朝ペルシア: ペルシア湾貿易はあるが地中海・インド洋との
-     定期海路は限定的。陸路シルクロードが主な国際接続。
-  7. ビルマ（コンバウン朝）: 沿岸アクセスはあるが、定期的な国際海路は
-     英国進出まで限定的。
-
-シナリオ:
-  A) ベースライン（変更なし）
-  B) 強い候補のみ再分類（5国）
-  C) 全候補再分類（7国）
+  → 合計 3×2 = 6 シナリオ
 """
 
 import warnings
@@ -41,7 +22,6 @@ import pandas as pd
 import scipy.stats as stats
 import math
 import statsmodels.api as sm
-from scipy.stats import norm, ncx2
 from data import load_data
 
 
@@ -79,6 +59,15 @@ RATIONALE = {
                             "内陸志向の閉鎖的経済構造",
 }
 
+# disrupted に再分類した18国（参照用）
+DISRUPTED_ENTITIES = [
+    "徳川日本", "オスマン帝国（後期）", "ポルトガル帝国", "オランダ共和国",
+    "スペイン帝国", "1930s日本（大東亜共栄圏）", "ナチスドイツ", "ファシストイタリア",
+    "ソ連", "東ドイツ", "ユーゴスラビア", "スウェーデン帝国",
+    "ロシア帝国（ピョートル後）", "オーストリア＝ハンガリー帝国", "ナポレオン帝国",
+    "チェコスロバキア（共産期）", "ポーランド（共産期）", "ルーマニア（共産期）",
+]
+
 
 def apply_technical_maritime_ban(df, candidates):
     """指定候補を technical_maritime_ban に再分類したDataFrameを返す"""
@@ -88,18 +77,31 @@ def apply_technical_maritime_ban(df, candidates):
     return df_new
 
 
+def apply_disrupted_assignment(df, mode):
+    """disrupted を conquered または survived に割り当てた二値変数を設定"""
+    df_new = df.copy()
+    if mode == "as_conquered":
+        df_new["outcome_binary"] = (df_new["outcome"].isin(["overtaken", "disrupted"])).astype(int)
+        # For crosstab: remap outcome to binary label
+        df_new["outcome_bin_label"] = df_new["outcome_binary"].map({1: "overtaken", 0: "survived"})
+    else:  # as_survived
+        df_new["outcome_binary"] = (df_new["outcome"] == "overtaken").astype(int)
+        df_new["outcome_bin_label"] = df_new["outcome_binary"].map({1: "overtaken", 0: "survived"})
+    return df_new
+
+
 # ============================================================
 # 分析関数群
 # ============================================================
 
 def compute_confusion_stats(df):
-    """混同行列の統計量を計算して辞書で返す"""
-    ct = pd.crosstab(df["dominant"], df["outcome"])
-    ct = ct.reindex(index=["stock", "flow"], columns=["conquered", "survived"])
+    """混同行列の統計量を計算（outcome_bin_label使用）"""
+    ct = pd.crosstab(df["dominant"], df["outcome_bin_label"])
+    ct = ct.reindex(index=["stock", "flow"], columns=["overtaken", "survived"], fill_value=0)
 
-    TP = ct.loc["stock", "conquered"]
+    TP = ct.loc["stock", "overtaken"]
     FP = ct.loc["stock", "survived"]
-    FN = ct.loc["flow", "conquered"]
+    FN = ct.loc["flow", "overtaken"]
     TN = ct.loc["flow", "survived"]
     N = TP + FP + FN + TN
 
@@ -108,7 +110,7 @@ def compute_confusion_stats(df):
 
     sensitivity = TP / (TP + FN) if (TP + FN) > 0 else 0
     specificity = TN / (TN + FP) if (TN + FP) > 0 else 0
-    accuracy = (TP + TN) / N
+    accuracy = (TP + TN) / N if N > 0 else 0
     ppv = TP / (TP + FP) if (TP + FP) > 0 else 0
     npv = TN / (TN + FN) if (TN + FN) > 0 else 0
 
@@ -135,14 +137,14 @@ def compute_confusion_stats(df):
 
 
 def compute_closure_analysis(df):
-    """closure_type 別の征服率と統計量"""
+    """closure_type 別の征服率（二値化後のoutcome_binary使用）"""
     results = {}
     for ct in df["closure_type"].unique():
         sub = df[df["closure_type"] == ct]
         n = len(sub)
-        n_conquered = sum(sub["outcome"] == "conquered")
+        n_conquered = int(sub["outcome_binary"].sum())
         rate = n_conquered / n if n > 0 else 0
-        results[ct] = {"n": n, "conquered": n_conquered, "rate": rate}
+        results[ct] = {"n": n, "overtaken": n_conquered, "rate": rate}
     return results
 
 
@@ -211,41 +213,21 @@ def compute_mediation_paths(df):
     except Exception:
         pass
 
-    # Path: stock → tech_position → outcome
-    try:
-        mod_m = sm.OLS(df["tech_position"], X_const).fit()
-        a = mod_m.params.iloc[1]
-        XM = sm.add_constant(pd.DataFrame({"x": x, "m": df["tech_position"]}))
-        mod_y = sm.Logit(y, XM).fit(disp=0, maxiter=100)
-        b = mod_y.params["m"]
-        c_prime = mod_y.params["x"]
-        paths["tech"] = {"a": a, "b": b, "ab": a * b, "c": c, "c_prime": c_prime}
-    except Exception:
-        paths["tech"] = None
-
-    # Path: stock → institutional_quality → outcome
-    try:
-        mod_m = sm.OLS(df["institutional_quality"], X_const).fit()
-        a = mod_m.params.iloc[1]
-        XM = sm.add_constant(pd.DataFrame({"x": x, "m": df["institutional_quality"]}))
-        mod_y = sm.Logit(y, XM).fit(disp=0, maxiter=100)
-        b = mod_y.params["m"]
-        c_prime = mod_y.params["x"]
-        paths["inst"] = {"a": a, "b": b, "ab": a * b, "c": c, "c_prime": c_prime}
-    except Exception:
-        paths["inst"] = None
-
-    # Path: stock → trade_openness → outcome
-    try:
-        mod_m = sm.OLS(df["trade_openness"], X_const).fit()
-        a = mod_m.params.iloc[1]
-        XM = sm.add_constant(pd.DataFrame({"x": x, "m": df["trade_openness"]}))
-        mod_y = sm.Logit(y, XM).fit(disp=0, maxiter=100)
-        b = mod_y.params["m"]
-        c_prime = mod_y.params["x"]
-        paths["trade"] = {"a": a, "b": b, "ab": a * b, "c": c, "c_prime": c_prime}
-    except Exception:
-        paths["trade"] = None
+    for mediator_key, mediator_col in [
+        ("tech", "tech_position"),
+        ("inst", "institutional_quality"),
+        ("trade", "trade_openness"),
+    ]:
+        try:
+            mod_m = sm.OLS(df[mediator_col], X_const).fit()
+            a = mod_m.params.iloc[1]
+            XM = sm.add_constant(pd.DataFrame({"x": x, "m": df[mediator_col]}))
+            mod_y = sm.Logit(y, XM).fit(disp=0, maxiter=100)
+            b = mod_y.params["m"]
+            c_prime = mod_y.params["x"]
+            paths[mediator_key] = {"a": a, "b": b, "ab": a * b, "c": c, "c_prime": c_prime}
+        except Exception:
+            paths[mediator_key] = None
 
     return paths
 
@@ -257,19 +239,20 @@ def compute_mediation_paths(df):
 def run_sensitivity():
     df_base = load_data()
 
-    scenarios = {
-        "A_baseline": {
-            "label": "ベースライン（変更なし）",
+    # 軸1: closure_type 再分類
+    closure_scenarios = {
+        "baseline": {
+            "label": "ベースライン",
             "df": df_base,
             "reclassified": [],
         },
-        "B_strong": {
-            "label": "強い候補のみ再分類（5国）",
+        "strong": {
+            "label": "+5国再分類",
             "df": apply_technical_maritime_ban(df_base, STRONG_CANDIDATES),
             "reclassified": STRONG_CANDIDATES,
         },
-        "C_all": {
-            "label": "全候補再分類（7国）",
+        "all": {
+            "label": "+7国再分類",
             "df": apply_technical_maritime_ban(
                 df_base, STRONG_CANDIDATES + MODERATE_CANDIDATES
             ),
@@ -277,15 +260,48 @@ def run_sensitivity():
         },
     }
 
+    # 軸2: disrupted の帰属
+    disrupted_modes = {
+        "as_conquered": "disrupted→征服扱い",
+        "as_survived": "disrupted→存続扱い",
+    }
+
     # ============================================================
-    # 1. 再分類対象の詳細
+    # 0. データの基本情報
     # ============================================================
     print("=" * 80)
-    print("感度分析: 技術的海禁政策 (Technical Maritime Ban)")
+    print("感度分析: 技術的海禁政策 × outcome再分類 (disrupted帰属)")
     print("=" * 80)
 
-    print("\n【再分類対象エンティティ】")
-    print("-" * 80)
+    n_conquered = len(df_base[df_base["outcome"] == "overtaken"])
+    n_disrupted = len(df_base[df_base["outcome"] == "disrupted"])
+    n_survived = len(df_base[df_base["outcome"] == "survived"])
+    print(f"\n  データ: N={len(df_base)}")
+    print(f"  outcome 3カテゴリ: overtaken={n_conquered}, disrupted={n_disrupted}, survived={n_survived}")
+    print(f"\n  感度分析軸:")
+    print(f"    軸1 — closure_type再分類: ベースライン / +5国 / +7国")
+    print(f"    軸2 — disrupted帰属: 征服扱い(overtaken+disrupted vs survived)")
+    print(f"                          存続扱い(overtaken vs disrupted+survived)")
+    print(f"    → 合計 3×2 = 6 シナリオ")
+
+    # ============================================================
+    # 1. disrupted エンティティ一覧
+    # ============================================================
+    print("\n\n" + "=" * 80)
+    print("SECTION 1: disrupted エンティティ一覧 (18国)")
+    print("=" * 80)
+
+    disrupted_df = df_base[df_base["outcome"] == "disrupted"]
+    for _, row in disrupted_df.iterrows():
+        print(f"  {row['entity']:35s} | {row['period']:20s} | {row['dominant']:5s} | {row['closure_type']}")
+
+    # ============================================================
+    # 2. 技術的海禁再分類対象
+    # ============================================================
+    print("\n\n" + "=" * 80)
+    print("SECTION 2: 技術的海禁再分類対象エンティティ")
+    print("=" * 80)
+
     for entity in STRONG_CANDIDATES + MODERATE_CANDIDATES:
         row = df_base[df_base["entity"] == entity].iloc[0]
         strength = "強" if entity in STRONG_CANDIDATES else "中"
@@ -297,132 +313,144 @@ def run_sensitivity():
         print(f"      根拠: {RATIONALE[entity]}")
 
     # ============================================================
-    # 2. closure_type 分布の変化
+    # 3. outcome分布の変化（各シナリオ）
     # ============================================================
     print("\n\n" + "=" * 80)
-    print("SECTION 1: closure_type 分布の変化")
+    print("SECTION 3: 二値化後の outcome 分布")
     print("=" * 80)
 
-    for key, sc in scenarios.items():
-        df_sc = sc["df"]
-        print(f"\n  --- {sc['label']} ---")
-        vc = df_sc["closure_type"].value_counts()
-        for ct, n in vc.items():
-            conquered = sum((df_sc["closure_type"] == ct) & (df_sc["outcome"] == "conquered"))
-            rate = conquered / n
-            print(f"    {ct:25s}: {n:3d}国  征服率={rate:.1%} ({conquered}/{n})")
+    for d_mode, d_label in disrupted_modes.items():
+        print(f"\n  ═══ {d_label} ═══")
+        for c_key, c_sc in closure_scenarios.items():
+            df_prepared = apply_disrupted_assignment(c_sc["df"], d_mode)
+            n_conq = int(df_prepared["outcome_binary"].sum())
+            n_surv = len(df_prepared) - n_conq
+            print(f"    {c_sc['label']:12s}: overtaken={n_conq}, survived={n_surv}")
+
+            # closure_type別
+            for ct in sorted(df_prepared["closure_type"].unique()):
+                sub = df_prepared[df_prepared["closure_type"] == ct]
+                n = len(sub)
+                nc = int(sub["outcome_binary"].sum())
+                rate = nc / n if n > 0 else 0
+                print(f"      {ct:25s}: {n:3d}国  征服率={rate:.1%} ({nc}/{n})")
 
     # ============================================================
-    # 3. 混同行列比較
+    # 4. 混同行列比較（6シナリオ）
     # ============================================================
     print("\n\n" + "=" * 80)
-    print("SECTION 2: 混同行列統計量の比較")
+    print("SECTION 4: 混同行列統計量の比較 (dominant × outcome)")
     print("=" * 80)
 
-    cm_results = {}
-    for key, sc in scenarios.items():
-        cm_results[key] = compute_confusion_stats(sc["df"])
+    all_cm = {}
+    for d_mode, d_label in disrupted_modes.items():
+        print(f"\n  ═══ {d_label} ═══")
+        for c_key, c_sc in closure_scenarios.items():
+            combo_key = f"{d_mode}__{c_key}"
+            df_prepared = apply_disrupted_assignment(c_sc["df"], d_mode)
+            cm = compute_confusion_stats(df_prepared)
+            all_cm[combo_key] = cm
 
-    header = f"  {'指標':25s}"
-    for key in scenarios:
-        header += f" {scenarios[key]['label'][:12]:>14s}"
-    print(f"\n{header}")
-    print(f"  {'-' * 70}")
+        # Print comparison table within this disrupted mode
+        header = f"    {'指標':25s}"
+        for c_key in closure_scenarios:
+            header += f" {closure_scenarios[c_key]['label']:>14s}"
+        print(f"\n{header}")
+        print(f"    {'-' * 70}")
 
-    metrics = [
-        ("OR (オッズ比)", "OR", ".3f"),
-        ("φ係数", "phi", ".3f"),
-        ("Fisher p値(片側)", "p_fisher", ".4f"),
-        ("χ² (Yates)", "chi2", ".3f"),
-        ("χ² p値", "p_chi2", ".4f"),
-        ("感度", "sensitivity", ".1%"),
-        ("特異度", "specificity", ".1%"),
-        ("正確度", "accuracy", ".1%"),
-        ("PPV", "ppv", ".1%"),
-        ("NPV", "npv", ".1%"),
-        ("ストック征服率", "stock_conquest_rate", ".1%"),
-        ("フロー征服率", "flow_conquest_rate", ".1%"),
-    ]
+        metrics = [
+            ("OR (オッズ比)", "OR", ".3f"),
+            ("φ係数", "phi", ".3f"),
+            ("Fisher p値(片側)", "p_fisher", ".4f"),
+            ("χ² (Yates)", "chi2", ".3f"),
+            ("感度", "sensitivity", ".1%"),
+            ("特異度", "specificity", ".1%"),
+            ("正確度", "accuracy", ".1%"),
+            ("ストック征服率", "stock_conquest_rate", ".1%"),
+            ("フロー征服率", "flow_conquest_rate", ".1%"),
+        ]
 
-    for label, key_m, fmt in metrics:
-        line = f"  {label:25s}"
-        for key in scenarios:
-            val = cm_results[key][key_m]
-            line += f" {val:>14{fmt}}"
-        print(line)
+        for label, key_m, fmt in metrics:
+            line = f"    {label:25s}"
+            for c_key in closure_scenarios:
+                combo_key = f"{d_mode}__{c_key}"
+                val = all_cm[combo_key][key_m]
+                line += f" {val:>14{fmt}}"
+            print(line)
 
     # ============================================================
-    # 4. 海禁ダミー付きロジスティック回帰
+    # 5. 多変量ロジスティック回帰（6シナリオ）
     # ============================================================
     print("\n\n" + "=" * 80)
-    print("SECTION 3: 多変量ロジスティック回帰（海禁ダミー追加）")
+    print("SECTION 5: 多変量ロジスティック回帰（海禁ダミー追加）")
     print("=" * 80)
 
-    for key, sc in scenarios.items():
-        print(f"\n  === {sc['label']} ===")
-        lr = compute_logistic_with_closure(sc["df"])
+    for d_mode, d_label in disrupted_modes.items():
+        print(f"\n  ═══ {d_label} ═══")
+        for c_key, c_sc in closure_scenarios.items():
+            df_prepared = apply_disrupted_assignment(c_sc["df"], d_mode)
+            print(f"\n    --- {c_sc['label']} ---")
+            lr = compute_logistic_with_closure(df_prepared)
 
-        for model_name, model_label in [
-            ("base", "基本モデル（海禁ダミーなし）"),
-            ("with_ban", "拡張モデル（海禁ダミーあり）"),
-        ]:
-            r = lr[model_name]
-            if not r.get("converged", False):
-                print(f"\n    [{model_label}] 収束失敗: {r.get('error', 'N/A')}")
-                continue
-            print(f"\n    [{model_label}]")
-            print(f"      AIC={r['aic']:.1f}, BIC={r['bic']:.1f}, Pseudo-R²={r['pseudo_r2']:.3f}")
-            print(f"      {'変数':30s} {'OR':>8s} {'95%CI':>22s} {'p値':>8s}")
-            print(f"      {'-'*70}")
-            for var, v in r["coefs"].items():
-                sig = " *" if v["p"] < 0.05 else "  " if v["p"] < 0.10 else ""
-                print(f"      {var:30s} {v['OR']:>8.3f} [{v['ci_lo']:>7.3f}, {v['ci_hi']:>7.3f}] {v['p']:>8.4f}{sig}")
+            for model_name, model_label in [
+                ("base", "基本モデル"),
+                ("with_ban", "海禁ダミーあり"),
+            ]:
+                r = lr[model_name]
+                if not r.get("converged", False):
+                    print(f"\n      [{model_label}] 収束失敗: {r.get('error', 'N/A')}")
+                    continue
+                print(f"\n      [{model_label}] AIC={r['aic']:.1f}, Pseudo-R²={r['pseudo_r2']:.3f}")
+                print(f"      {'変数':30s} {'OR':>8s} {'95%CI':>22s} {'p値':>8s}")
+                print(f"      {'-'*70}")
+                for var, v in r["coefs"].items():
+                    sig = " *" if v["p"] < 0.05 else "  " if v["p"] < 0.10 else ""
+                    print(f"      {var:30s} {v['OR']:>8.3f} [{v['ci_lo']:>7.3f}, {v['ci_hi']:>7.3f}] {v['p']:>8.4f}{sig}")
 
     # ============================================================
-    # 5. 海禁タイプ別の征服率（詳細）
+    # 6. 海禁タイプ別征服率（6シナリオ）
     # ============================================================
     print("\n\n" + "=" * 80)
-    print("SECTION 4: 海禁タイプ別征服率の詳細比較")
+    print("SECTION 6: 海禁→征服 Fisher検定（6シナリオ）")
     print("=" * 80)
 
-    for key, sc in scenarios.items():
-        print(f"\n  === {sc['label']} ===")
-        df_sc = sc["df"]
+    for d_mode, d_label in disrupted_modes.items():
+        print(f"\n  ═══ {d_label} ═══")
+        for c_key, c_sc in closure_scenarios.items():
+            df_prepared = apply_disrupted_assignment(c_sc["df"], d_mode)
+            print(f"\n    --- {c_sc['label']} ---")
 
-        # 海禁あり vs なし
-        has_ban = df_sc["closure_type"].isin(
-            ["maritime_ban", "technical_maritime_ban", "sakoku"]
-        )
-        ban_df = df_sc[has_ban]
-        no_ban_df = df_sc[~has_ban]
+            has_ban = df_prepared["closure_type"].isin(
+                ["maritime_ban", "technical_maritime_ban", "sakoku"]
+            )
+            ban_df = df_prepared[has_ban]
+            no_ban_df = df_prepared[~has_ban]
 
-        ban_rate = sum(ban_df["outcome"] == "conquered") / len(ban_df) if len(ban_df) > 0 else 0
-        no_rate = sum(no_ban_df["outcome"] == "conquered") / len(no_ban_df) if len(no_ban_df) > 0 else 0
+            ban_rate = ban_df["outcome_binary"].mean() if len(ban_df) > 0 else 0
+            no_rate = no_ban_df["outcome_binary"].mean() if len(no_ban_df) > 0 else 0
 
-        print(f"    海禁あり: {len(ban_df)}国, 征服率={ban_rate:.1%}")
-        print(f"    海禁なし: {len(no_ban_df)}国, 征服率={no_rate:.1%}")
+            print(f"      海禁あり: {len(ban_df)}国, 征服率={ban_rate:.1%}")
+            print(f"      海禁なし: {len(no_ban_df)}国, 征服率={no_rate:.1%}")
 
-        if len(ban_df) > 0 and len(no_ban_df) > 0:
-            # Risk difference & ratio
-            rd = ban_rate - no_rate
-            rr = ban_rate / no_rate if no_rate > 0 else float("inf")
-            print(f"    リスク差: {rd:+.1%}")
-            print(f"    リスク比: {rr:.3f}")
+            if len(ban_df) > 0 and len(no_ban_df) > 0:
+                rd = ban_rate - no_rate
+                rr = ban_rate / no_rate if no_rate > 0 else float("inf")
+                print(f"      リスク差: {rd:+.1%}")
+                print(f"      リスク比: {rr:.3f}")
 
-            # Fisher's exact test for ban vs no-ban
-            ban_conq = sum(ban_df["outcome"] == "conquered")
-            ban_surv = len(ban_df) - ban_conq
-            no_conq = sum(no_ban_df["outcome"] == "conquered")
-            no_surv = len(no_ban_df) - no_conq
-            table = np.array([[ban_conq, ban_surv], [no_conq, no_surv]])
-            _, p = stats.fisher_exact(table, alternative="greater")
-            print(f"    Fisher検定 (海禁→征服): p={p:.4f}")
+                ban_conq = int(ban_df["outcome_binary"].sum())
+                ban_surv = len(ban_df) - ban_conq
+                no_conq = int(no_ban_df["outcome_binary"].sum())
+                no_surv = len(no_ban_df) - no_conq
+                table = np.array([[ban_conq, ban_surv], [no_conq, no_surv]])
+                _, p = stats.fisher_exact(table, alternative="greater")
+                print(f"      Fisher検定: p={p:.4f}" + (" *" if p < 0.05 else ""))
 
     # ============================================================
-    # 6. 媒介分析の感度
+    # 7. 媒介分析（6シナリオ）
     # ============================================================
     print("\n\n" + "=" * 80)
-    print("SECTION 5: 媒介分析パス係数の感度比較")
+    print("SECTION 7: 媒介分析パス係数")
     print("=" * 80)
 
     path_labels = {
@@ -431,140 +459,126 @@ def run_sensitivity():
         "trade": "ストック優位→貿易開放度→征服",
     }
 
-    med_results = {}
-    for key, sc in scenarios.items():
-        med_results[key] = compute_mediation_paths(sc["df"])
+    for d_mode, d_label in disrupted_modes.items():
+        print(f"\n  ═══ {d_label} ═══")
+        med_results = {}
+        for c_key, c_sc in closure_scenarios.items():
+            df_prepared = apply_disrupted_assignment(c_sc["df"], d_mode)
+            med_results[c_key] = compute_mediation_paths(df_prepared)
 
-    for path_key, path_label in path_labels.items():
-        print(f"\n  【{path_label}】")
-        cprime_label = "c' (直接)"
-        print(f"    {'シナリオ':14s} {'a (X→M)':>10s} {'b (M→Y)':>10s} {'a×b (間接)':>12s} {'c (総効果)':>12s} {cprime_label:>12s}")
-        print(f"    {'-' * 72}")
-        for key in scenarios:
-            r = med_results[key].get(path_key)
-            if r is None:
-                print(f"    {scenarios[key]['label'][:14]:14s}  (収束失敗)")
-                continue
-            print(f"    {scenarios[key]['label'][:14]:14s} {r['a']:>10.4f} {r['b']:>10.4f} {r['ab']:>12.4f} {r['c']:>12.4f} {r['c_prime']:>12.4f}")
-
-    # ============================================================
-    # 7. 技術的海禁の効果: 反実仮想
-    # ============================================================
-    print("\n\n" + "=" * 80)
-    print("SECTION 6: 反実仮想分析 — 技術的海禁国が開放的だった場合")
-    print("=" * 80)
-
-    df_c = scenarios["C_all"]["df"]
-    tech_ban = df_c[df_c["closure_type"] == "technical_maritime_ban"]
-
-    print(f"\n  技術的海禁に再分類された {len(tech_ban)} 国:")
-    for _, row in tech_ban.iterrows():
-        print(f"    {row['entity']:30s} | dominant={row['dominant']:5s} | outcome={row['outcome']}")
-
-    # Compare: what if these entities had higher trade_openness?
-    print(f"\n  【反実仮想: trade_openness を +0.2 したら？】")
-    df_cf = df_c.copy()
-    mask = df_cf["closure_type"] == "technical_maritime_ban"
-    original_to = df_cf.loc[mask, "trade_openness"].values.copy()
-    df_cf.loc[mask, "trade_openness"] = np.minimum(1.0, df_cf.loc[mask, "trade_openness"] + 0.2)
-
-    # Re-run logistic with counterfactual
-    y = df_cf["outcome_binary"]
-    df_cf["has_maritime_ban"] = df_cf["closure_type"].isin(
-        ["maritime_ban", "technical_maritime_ban", "sakoku"]
-    ).astype(int)
-    covs = ["dominant_binary", "trade_openness", "geo_barrier", "external_threat",
-            "tech_position", "institutional_quality", "era_code", "has_external_patron"]
-    X = sm.add_constant(df_cf[covs].astype(float))
-    try:
-        model = sm.Logit(y, X).fit(disp=0, maxiter=200)
-        print(f"\n    反実仮想モデル (trade_openness +0.2 for tech_ban entities):")
-        print(f"    AIC={model.aic:.1f}, Pseudo-R²={model.prsquared:.3f}")
-        for var in covs:
-            sig = " *" if model.pvalues[var] < 0.05 else ""
-            print(f"      {var:30s} OR={np.exp(model.params[var]):.3f}  p={model.pvalues[var]:.4f}{sig}")
-    except Exception as e:
-        print(f"    収束失敗: {e}")
+        for path_key, path_label in path_labels.items():
+            print(f"\n    【{path_label}】")
+            cprime_label = "c' (直接)"
+            print(f"      {'シナリオ':12s} {'a (X→M)':>10s} {'b (M→Y)':>10s} {'a×b':>10s} {'c (総効果)':>12s} {cprime_label:>12s}")
+            print(f"      {'-' * 72}")
+            for c_key in closure_scenarios:
+                r = med_results[c_key].get(path_key)
+                if r is None:
+                    print(f"      {closure_scenarios[c_key]['label']:12s}  (収束失敗)")
+                    continue
+                c_val = r['c'] if r['c'] is not None else float('nan')
+                print(f"      {closure_scenarios[c_key]['label']:12s} {r['a']:>10.4f} {r['b']:>10.4f} {r['ab']:>10.4f} {c_val:>12.4f} {r['c_prime']:>12.4f}")
 
     # ============================================================
-    # 8. ブートストラップによるOR感度
+    # 8. ブートストラップOR（6シナリオ）
     # ============================================================
     print("\n\n" + "=" * 80)
-    print("SECTION 7: ブートストラップOR推定（各シナリオ）")
+    print("SECTION 8: ブートストラップOR推定")
     print("=" * 80)
 
     rng = np.random.default_rng(42)
     n_boot = 5000
 
-    for key, sc in scenarios.items():
-        df_sc = sc["df"]
-        n = len(df_sc)
-        boot_ors = np.zeros(n_boot)
+    for d_mode, d_label in disrupted_modes.items():
+        print(f"\n  ═══ {d_label} ═══")
+        for c_key, c_sc in closure_scenarios.items():
+            df_prepared = apply_disrupted_assignment(c_sc["df"], d_mode)
+            n = len(df_prepared)
+            boot_ors = np.zeros(n_boot)
 
-        for i in range(n_boot):
-            idx = rng.choice(n, size=n, replace=True)
-            boot_df = df_sc.iloc[idx].reset_index(drop=True)
-            try:
-                ct = pd.crosstab(boot_df["dominant"], boot_df["outcome"])
-                ct = ct.reindex(index=["stock", "flow"], columns=["conquered", "survived"], fill_value=0)
-                tp = ct.loc["stock", "conquered"]
-                fp = ct.loc["stock", "survived"]
-                fn = ct.loc["flow", "conquered"]
-                tn = ct.loc["flow", "survived"]
-                boot_ors[i] = (tp * tn) / (fp * fn) if (fp * fn) > 0 else np.nan
-            except (KeyError, ZeroDivisionError):
-                boot_ors[i] = np.nan
+            for i in range(n_boot):
+                idx = rng.choice(n, size=n, replace=True)
+                boot_df = df_prepared.iloc[idx].reset_index(drop=True)
+                try:
+                    ct = pd.crosstab(boot_df["dominant"], boot_df["outcome_bin_label"])
+                    ct = ct.reindex(index=["stock", "flow"], columns=["overtaken", "survived"], fill_value=0)
+                    tp = ct.loc["stock", "overtaken"]
+                    fp = ct.loc["stock", "survived"]
+                    fn = ct.loc["flow", "overtaken"]
+                    tn = ct.loc["flow", "survived"]
+                    boot_ors[i] = (tp * tn) / (fp * fn) if (fp * fn) > 0 else np.nan
+                except (KeyError, ZeroDivisionError):
+                    boot_ors[i] = np.nan
 
-        valid = boot_ors[~np.isnan(boot_ors)]
-        if len(valid) >= 100:
-            ci_lo, ci_hi = np.percentile(valid, [2.5, 97.5])
-            median_or = np.median(valid)
-            print(f"\n  {sc['label']}:")
-            print(f"    Bootstrap OR: median={median_or:.3f}, 95%CI=[{ci_lo:.3f}, {ci_hi:.3f}]")
-            print(f"    Point estimate OR: {cm_results[key]['OR']:.3f}")
+            valid = boot_ors[~np.isnan(boot_ors)]
+            if len(valid) >= 100:
+                ci_lo, ci_hi = np.percentile(valid, [2.5, 97.5])
+                median_or = np.median(valid)
+                combo_key = f"{d_mode}__{c_key}"
+                print(f"    {c_sc['label']:12s}: median={median_or:.3f}, 95%CI=[{ci_lo:.3f}, {ci_hi:.3f}]  (point={all_cm[combo_key]['OR']:.3f})")
 
     # ============================================================
     # 9. サマリーテーブル
     # ============================================================
     print("\n\n" + "=" * 80)
-    print("SUMMARY: 感度分析結果一覧")
+    print("SUMMARY: 全6シナリオ比較")
     print("=" * 80)
 
     summary_rows = []
-    for key, sc in scenarios.items():
-        cm = cm_results[key]
-        lr = compute_logistic_with_closure(sc["df"])
-        ban_info = compute_closure_analysis(sc["df"])
+    for d_mode, d_label in disrupted_modes.items():
+        for c_key, c_sc in closure_scenarios.items():
+            combo_key = f"{d_mode}__{c_key}"
+            cm = all_cm[combo_key]
+            df_prepared = apply_disrupted_assignment(c_sc["df"], d_mode)
+            lr = compute_logistic_with_closure(df_prepared)
+            ban_info = compute_closure_analysis(df_prepared)
 
-        n_ban = sum(
-            v["n"] for k, v in ban_info.items()
-            if k in ["maritime_ban", "technical_maritime_ban", "sakoku"]
-        )
-        ban_rate = sum(
-            v["conquered"] for k, v in ban_info.items()
-            if k in ["maritime_ban", "technical_maritime_ban", "sakoku"]
-        ) / n_ban if n_ban > 0 else 0
+            n_ban = sum(
+                v["n"] for k, v in ban_info.items()
+                if k in ["maritime_ban", "technical_maritime_ban", "sakoku"]
+            )
+            ban_conquered = sum(
+                v["overtaken"] for k, v in ban_info.items()
+                if k in ["maritime_ban", "technical_maritime_ban", "sakoku"]
+            )
+            ban_rate = ban_conquered / n_ban if n_ban > 0 else 0
 
-        row = {
-            "シナリオ": sc["label"],
-            "再分類数": len(sc["reclassified"]),
-            "海禁国数": n_ban,
-            "海禁征服率": f"{ban_rate:.1%}",
-            "OR": f"{cm['OR']:.3f}",
-            "φ": f"{cm['phi']:.3f}",
-            "Fisher p": f"{cm['p_fisher']:.4f}",
-        }
+            # Fisher for ban vs no-ban
+            has_ban = df_prepared["closure_type"].isin(
+                ["maritime_ban", "technical_maritime_ban", "sakoku"]
+            )
+            ban_df = df_prepared[has_ban]
+            no_ban_df = df_prepared[~has_ban]
+            ban_conq = int(ban_df["outcome_binary"].sum())
+            ban_surv = len(ban_df) - ban_conq
+            no_conq = int(no_ban_df["outcome_binary"].sum())
+            no_surv = len(no_ban_df) - no_conq
+            _, p_ban_fisher = stats.fisher_exact(
+                np.array([[ban_conq, ban_surv], [no_conq, no_surv]]),
+                alternative="greater"
+            )
 
-        lr_with = lr.get("with_ban", {})
-        if lr_with.get("converged"):
-            ban_coef = lr_with["coefs"].get("has_maritime_ban", {})
-            row["海禁OR(多変量)"] = f"{ban_coef.get('OR', 'N/A'):.3f}" if ban_coef else "N/A"
-            row["海禁p(多変量)"] = f"{ban_coef.get('p', 'N/A'):.4f}" if ban_coef else "N/A"
-        else:
-            row["海禁OR(多変量)"] = "NC"
-            row["海禁p(多変量)"] = "NC"
+            lr_with = lr.get("with_ban", {})
+            ban_or_mv = "NC"
+            ban_p_mv = "NC"
+            if lr_with.get("converged"):
+                bc = lr_with["coefs"].get("has_maritime_ban", {})
+                if bc:
+                    ban_or_mv = f"{bc['OR']:.3f}"
+                    ban_p_mv = f"{bc['p']:.4f}"
 
-        summary_rows.append(row)
+            summary_rows.append({
+                "disrupted": d_label,
+                "海禁再分類": c_sc["label"],
+                "征服数": int(df_prepared["outcome_binary"].sum()),
+                "OR": f"{cm['OR']:.3f}",
+                "φ": f"{cm['phi']:.3f}",
+                "Fisher_p": f"{cm['p_fisher']:.4f}",
+                "海禁征服率": f"{ban_rate:.1%}",
+                "海禁Fisher_p": f"{p_ban_fisher:.4f}",
+                "海禁OR(MV)": ban_or_mv,
+                "海禁p(MV)": ban_p_mv,
+            })
 
     summary_df = pd.DataFrame(summary_rows)
     print(f"\n{summary_df.to_string(index=False)}")
@@ -576,35 +590,39 @@ def run_sensitivity():
     print("解釈と考察")
     print("=" * 80)
 
-    or_base = cm_results["A_baseline"]["OR"]
-    or_strong = cm_results["B_strong"]["OR"]
-    or_all = cm_results["C_all"]["OR"]
-
-    p_base = cm_results["A_baseline"]["p_fisher"]
-    p_strong = cm_results["B_strong"]["p_fisher"]
-    p_all = cm_results["C_all"]["p_fisher"]
+    # Compare OR across disrupted modes
+    or_conq = all_cm["as_conquered__baseline"]["OR"]
+    or_surv = all_cm["as_survived__baseline"]["OR"]
+    p_conq = all_cm["as_conquered__baseline"]["p_fisher"]
+    p_surv = all_cm["as_survived__baseline"]["p_fisher"]
 
     print(f"""
-  1. 【OR（オッズ比）の頑健性】
-     ベースライン OR = {or_base:.3f}
-     強い候補再分類 OR = {or_strong:.3f} (Δ = {or_strong - or_base:+.3f})
-     全候補再分類   OR = {or_all:.3f} (Δ = {or_all - or_base:+.3f})
-     → 技術的海禁の再分類は主要結果に {'大きく' if abs(or_strong - or_base) > 0.3 else '軽微に'}影響。
+  1. 【disrupted帰属の影響（ベースライン）】
+     征服扱い: OR={or_conq:.3f}, Fisher p={p_conq:.4f}
+     存続扱い: OR={or_surv:.3f}, Fisher p={p_surv:.4f}
+     OR差: {abs(or_conq - or_surv):.3f}
+     → disrupted の帰属は主要結果に{'大きく' if abs(or_conq - or_surv) > 0.3 else '軽微に'}影響。
 
-  2. 【統計的有意性の安定性】
-     ベースライン Fisher p = {p_base:.4f} {'(有意)' if p_base < 0.05 else '(非有意)'}
-     強い候補再分類 Fisher p = {p_strong:.4f} {'(有意)' if p_strong < 0.05 else '(非有意)'}
-     全候補再分類   Fisher p = {p_all:.4f} {'(有意)' if p_all < 0.05 else '(非有意)'}
-     → {'結論は全シナリオで一貫している。' if (p_base < 0.05) == (p_strong < 0.05) == (p_all < 0.05)
-        else '一部シナリオで統計的有意性が変化する。'}
+  2. 【技術的海禁再分類の影響】""")
 
-  3. 【技術的海禁の含意】
-     定期航路の不在（技術的海禁）は、政策的海禁と異なり意図的選択ではない。
-     しかし、フロー遮断の効果は類似している可能性がある。
-     再分類により海禁国の征服率パターンが変化するかを検証することで、
-     「閉鎖性」の操作的定義に対する分析の感度を評価できる。
+    for d_mode, d_label in disrupted_modes.items():
+        or_b = all_cm[f"{d_mode}__baseline"]["OR"]
+        or_s = all_cm[f"{d_mode}__strong"]["OR"]
+        or_a = all_cm[f"{d_mode}__all"]["OR"]
+        print(f"     {d_label}:")
+        print(f"       ベースライン OR={or_b:.3f} → +5国 OR={or_s:.3f} → +7国 OR={or_a:.3f}")
 
-  4. 【政策的海禁 vs 技術的海禁】
+    print(f"""
+  3. 【三カテゴリ outcome の含意】
+     overtaken: 外部勢力による植民地化・併合（明確な外部征服）
+     disrupted: 内部崩壊・革命・体制変革（国家/後継国家は独立維持）
+     survived:  政体・国家ともに存続
+
+     disrupted を征服側に入れるか存続側に入れるかで結果が変化する場合、
+     「征服」の操作的定義に対する分析の感度が高いことを意味する。
+     逆に変化しなければ、結論は定義に対して頑健である。
+
+  4. 【政策的海禁 vs 技術的海禁（再確認）】
      政策的海禁は「選択的閉鎖」であり、国家が意図的にフローを制限する。
      技術的海禁は「受動的閉鎖」であり、技術・地理的制約によりフローが不可能。
      両者が同様の帰結をもたらすならば、閉鎖メカニズムは意図ではなく

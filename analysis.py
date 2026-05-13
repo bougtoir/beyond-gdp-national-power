@@ -30,7 +30,7 @@ def confusion_matrix_analysis(df):
 
     ct = pd.crosstab(
         df["dominant"].map({"stock": "ストック優位", "flow": "フロー優位"}),
-        df["outcome"].map({"conquered": "征服・崩壊", "survived": "存続・変容"}),
+        df["outcome"].map({"overtaken": "征服・崩壊", "disrupted": "征服・崩壊", "survived": "存続・変容"}),
     )
     # Ensure order
     ct = ct.reindex(
@@ -330,7 +330,7 @@ if __name__ == "__main__":
     df = load_data()
     print(f"データセット: N={len(df)}, ストック優位={sum(df['dominant']=='stock')}, "
           f"フロー優位={sum(df['dominant']=='flow')}")
-    print(f"征服={sum(df['outcome']=='conquered')}, 存続={sum(df['outcome']=='survived')}")
+    print(f"征服={sum(df['outcome']=='overtaken')}, 崩壊={sum(df['outcome']=='disrupted')}, 存続={sum(df['outcome']=='survived')}")
 
     # Step 1
     cm_results = confusion_matrix_analysis(df)
