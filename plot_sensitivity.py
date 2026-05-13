@@ -107,7 +107,7 @@ def plot_conquest_rates_by_closure():
                 ax.set_title(sc_name, fontsize=11, fontweight="bold")
 
     fig.suptitle("Sensitivity Analysis: Overtaken Rate by Closure Type\n"
-                 "(disrupted assignment × maritime ban reclassification)",
+                 "(disrupted assignment × network exclusion reclassification)",
                  fontsize=13, fontweight="bold", y=1.02)
     plt.tight_layout()
     path = os.path.join(FIG_DIR, "sensitivity_conquest_rates.png")
@@ -169,13 +169,13 @@ def plot_fisher_p_progression():
 
     ax1.axhline(y=0.05, color="red", linestyle="--", linewidth=1.5, alpha=0.7, label="p = 0.05")
     ax1.set_ylabel("Fisher p-value (one-sided)", fontsize=11)
-    ax1.set_title("Maritime Ban → Overtaken: Fisher Exact Test p-value", fontsize=12, fontweight="bold")
+    ax1.set_title("Network Closure → Overtaken: Fisher Exact Test p-value", fontsize=12, fontweight="bold")
     ax1.legend(fontsize=9)
     ax1.set_ylim(bottom=0)
 
     ax2.axhline(y=0, color="gray", linestyle="-", linewidth=0.5)
     ax2.set_ylabel("Risk Difference (ban - no ban, %pts)", fontsize=11)
-    ax2.set_title("Overtaken Risk Difference: Maritime Ban vs Open", fontsize=12, fontweight="bold")
+    ax2.set_title("Overtaken Risk Difference: Network Closure vs Open", fontsize=12, fontweight="bold")
     ax2.legend(fontsize=9)
 
     labels = [s[0] for s in steps]
@@ -206,7 +206,7 @@ def plot_policy_vs_technical():
     }
 
     categories = ["maritime_ban", "technical_network_exclusion", "sakoku", "bloc", "none"]
-    cat_labels = ["Policy\nMaritime Ban", "Technical\nMaritime Ban", "Sakoku", "Bloc", "None\n(open)"]
+    cat_labels = ["Policy\nMaritime Ban", "Technical\nNetwork Excl.", "Sakoku", "Bloc", "None\n(open)"]
     colors = ["#FF6B6B", "#FFB347", "#C44D58", "#45B7D1", "#4ECDC4"]
 
     fig, axes = plt.subplots(1, 2, figsize=(16, 7), sharey=True)

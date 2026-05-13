@@ -78,7 +78,7 @@ def create_cover_letter():
         "The manuscript addresses a fundamental question in economic history: why does "
         "exclusion from international exchange networks so reliably precede state collapse? "
         "Using a comparative dataset of 96 historical polities spanning antiquity to the "
-        "present, we distinguish between deliberate closure (policy-based maritime bans, "
+        "present, we distinguish between deliberate closure (policy-based trade bans, "
         "sakoku) and what we term 'technical network exclusion'—involuntary disconnection "
         "from the dominant exchange network of an era due to geographic or technological "
         "constraints. We argue that the critical channel is technology flow: technically "
@@ -108,7 +108,7 @@ def create_cover_letter():
         "Tokugawa Japan\u2019s rangaku, Qing China\u2019s Canton system)\u2014and find mixed outcomes, "
         "suggesting that the policy question is not binary (open or closed) but conditional "
         "on which channels are preserved. Third, the technology-flow mechanism we propose "
-        "generalizes beyond maritime isolation: as the dominant network shifts from sea lanes "
+        "generalizes beyond geographic isolation: as the dominant network shifts from sea lanes "
         "to semiconductors, AI infrastructure, and advanced robotics, the same logic of "
         "cumulative divergence through exclusion may apply to contemporary states. Fourth, "
         "the sensitivity analysis framework (3 reclassification levels \u00d7 2 outcome "
@@ -310,7 +310,7 @@ def create_strobe_checklist():
         ("16(c)", "Main results",
          "If relevant, consider translating estimates of relative risk into absolute risk for a meaningful time period",
          "Section 4",
-         "Absolute conquest rates reported for each group (e.g., 86.4% maritime closure vs. 60.8% no closure)"),
+         "Absolute conquest rates reported for each group (e.g., 86.4% network closure vs. 60.8% no closure)"),
 
         ("17", "Other analyses",
          "Report other analyses done—e.g., analyses of subgroups and interactions, and sensitivity analyses",

@@ -585,7 +585,7 @@ def create_figures(results):
             "institutional_quality": "Institutional quality",
             "era_code": "Era (time)",
             "has_external_patron": "External patron",
-            "has_maritime_ban": "Maritime closure",
+            "has_maritime_ban": "Network closure",
         }
         vars_ordered = list(var_labels.keys())
         y_pos = list(range(len(vars_ordered)))
@@ -635,8 +635,8 @@ def create_pptx():
 
     fig_files = sorted([f for f in os.listdir(FIG) if f.endswith(".png")])
     captions = {
-        "Fig1.png": "Fig. 1  Conquest rates comparing maritime closure vs. no closure polities across three reclassification scenarios.",
-        "Fig2.png": "Fig. 2  Fisher's exact test p-values for maritime closure → conquest association, showing transition to significance with reclassification.",
+        "Fig1.png": "Fig. 1  Conquest rates comparing network closure vs. open polities across three reclassification scenarios.",
+        "Fig2.png": "Fig. 2  Fisher's exact test p-values for network closure → conquest association, showing transition to significance with reclassification.",
         "Fig3.png": "Fig. 3  Conquest rates by closure type under the 7-country reclassification scenario.",
         "Fig4.png": "Fig. 4  Forest plot of multivariate logistic regression odds ratios (7-country reclassification, disrupted→overtaken).",
     }
@@ -827,7 +827,7 @@ def create_manuscript(results):
     p = doc.add_paragraph()
     run = p.add_run("Keywords: ")
     run.bold = True
-    p.add_run("network exclusion; economic history; maritime closure; state collapse; "
+    p.add_run("network exclusion; economic history; technology flow disruption; state collapse; "
               "technological access; sensitivity analysis")
 
     # ── JEL ──
@@ -873,8 +873,8 @@ def create_manuscript(results):
         "Yet this focus on intentional closure overlooks a logically prior question: what happens "
         "to polities that never had the option of connecting to the dominant network in the first "
         "place? The Khmer Empire at Angkor, the Kievan Rus' principality, or the Timurid dynasty "
-        "were not isolated because their rulers chose closure; they were isolated because no regular "
-        "maritime routes connected them to the major trading systems of their era. If these polities "
+        "were not isolated because their rulers chose closure; they were isolated because the "
+        "dominant exchange networks of their era did not reach them. If these polities "
         "exhibit the same elevated conquest risk as deliberately closed ones, then the mechanism "
         "at work is not the policy decision to close but the disconnection itself."
     )
@@ -994,11 +994,16 @@ def create_manuscript(results):
 
     doc.add_heading("2.3  Technical network exclusion: definition and candidates", level=2)
     doc.add_paragraph(
-        "We define technical network exclusion, in its maritime-era form, as the condition in "
-        "which no regular sea routes connected a polity to the major trading systems of its period. "
-        "The key distinction from policy-based closure is the absence of agency: these polities "
-        "did not choose isolation. Rather, the transport technology of their era had not yet "
-        "extended regular maritime connectivity to their region."
+        "We define technical network exclusion as the condition in "
+        "which a polity was structurally disconnected from the dominant exchange network of its "
+        "era—whether maritime, overland, or otherwise—due to geographic or technological "
+        "constraints rather than policy choice. In the maritime age, this typically meant the "
+        "absence of regular sea routes; for inland polities along the Silk Road, it meant that "
+        "while some goods traveled overland, the volume and variety of technology transfer fell "
+        "far short of what maritime-connected polities received. The key distinction from "
+        "policy-based closure is the absence of agency: these polities "
+        "did not choose isolation. The transport and communication infrastructure of their era "
+        "had not yet extended effective connectivity to their region."
     )
     doc.add_paragraph(
         "We identify seven reclassification candidates in two tiers (Table 1)."
@@ -1022,13 +1027,13 @@ def create_manuscript(results):
         row_data = df[df["entity"] == entity].iloc[0]
         tier = "Strong" if entity in STRONG_CANDIDATES else "Moderate"
         rationale_en = {
-            "漢朝（前漢〜後漢）": "No regular sea route from Mediterranean. Silk Road overland only.",
-            "マリ帝国": "No Atlantic maritime route until Portuguese exploration (15th c.). Trans-Saharan caravan only.",
-            "クメール帝国（アンコール）": "Inland polity; no direct oceanic access unlike maritime Srivijaya.",
-            "キエフ大公国": "Dnieper river trade (Varangian route); no regular oceanic routes.",
-            "ティムール朝": "Completely landlocked; no maritime access. Silk Road overland only.",
-            "ササン朝ペルシア": "Limited Persian Gulf trade; no regular Indian Ocean/Mediterranean sea routes established.",
-            "ビルマ（コンバウン朝）": "Coastal access existed but no regular international sea routes until British arrival.",
+            "漢朝（前漢〜後漢）": "Excluded from Mediterranean network; Silk Road provided limited overland contact only.",
+            "マリ帝国": "Excluded from Atlantic/Mediterranean networks until Portuguese contact (15th c.). Trans-Saharan caravan only.",
+            "クメール帝国（アンコール）": "Inland polity; excluded from dominant exchange networks unlike neighbouring Srivijaya.",
+            "キエフ大公国": "Dnieper river trade (Varangian route) only; excluded from dominant exchange networks.",
+            "ティムール朝": "Landlocked; Silk Road overland only. Excluded from dominant Mediterranean and Indian Ocean networks.",
+            "ササン朝ペルシア": "Limited Persian Gulf trade; excluded from established Indian Ocean and Mediterranean networks.",
+            "ビルマ（コンバウン朝）": "Coastal access existed but excluded from regular international exchange networks until British arrival.",
         }.get(entity, "")
 
         row_cells = table1.add_row().cells
@@ -1076,7 +1081,7 @@ def create_manuscript(results):
     doc.add_heading("3.3  Closure–conquest association", level=2)
     doc.add_paragraph(
         "For each of the six scenarios, we construct a 2 × 2 table crossing closure status "
-        "(maritime closure vs. open) against the binarized outcome. The 'maritime closure' "
+        "(network closure vs. open) against the binarized outcome. The 'network closure' "
         "group includes polities coded as maritime ban, sakoku, or technical network exclusion. We "
         "compute one-sided Fisher's exact tests evaluating whether closure is associated with "
         "elevated conquest rates, and report relative risks alongside p-values."
@@ -1088,7 +1093,7 @@ def create_manuscript(results):
         "we fit logistic regression models with the binarized outcome as the dependent variable "
         "and the following covariates: stock-dominant indicator, geographic barrier, external "
         "threat level, technological position, institutional quality, era (coded ordinally), "
-        "external patron indicator, and a maritime closure indicator. We report exponentiated "
+        "external patron indicator, and a network closure indicator. We report exponentiated "
         "coefficients (odds ratios) with 95% confidence intervals."
     )
 
@@ -1133,7 +1138,7 @@ def create_manuscript(results):
     doc.add_paragraph(
         f"Table 2 reports the closure–conquest association across all six scenarios. "
         f"At baseline under the disrupted → overtaken assignment, polities with some form of "
-        f"maritime closure have a conquest rate of {s_base_c['ban_rate']:.1%}, compared with "
+        f"network closure have a conquest rate of {s_base_c['ban_rate']:.1%}, compared with "
         f"{s_base_c['no_ban_rate']:.1%} for open polities (Fisher p = "
         f"{s_base_c['fisher_ban_p']:.4f}, not significant). Reclassifying five strong candidates "
         f"as technically excluded raises the closure-group conquest rate to "
@@ -1191,7 +1196,7 @@ def create_manuscript(results):
     run = p2.add_run("Fig. 1  ")
     run.bold = True
     run.font.size = Pt(10)
-    p2.add_run("Conquest rates comparing maritime closure vs. no closure polities across three "
+    p2.add_run("Conquest rates comparing network closure vs. open polities across three "
                "reclassification scenarios under both disrupted assignments.").font.size = Pt(10)
 
     # Insert Fig 2 inline
@@ -1205,7 +1210,7 @@ def create_manuscript(results):
     run = p2.add_run("Fig. 2  ")
     run.bold = True
     run.font.size = Pt(10)
-    p2.add_run("Fisher's exact test p-values for the maritime closure → conquest association "
+    p2.add_run("Fisher's exact test p-values for the network closure → conquest association "
                "as polities are progressively reclassified.").font.size = Pt(10)
 
     # ════════════════════════════════════════
@@ -1217,7 +1222,7 @@ def create_manuscript(results):
     doc.add_paragraph(
         "Figure 3 disaggregates conquest rates by closure type under the 7-country reclassification. "
         "A striking gradient emerges. Technically excluded polities—those with zero access to "
-        "maritime exchange networks—exhibit a 100% conquest rate. Policy-based maritime bans, "
+        "the dominant exchange networks of their era—exhibit a 100% conquest rate. Policy-based maritime bans, "
         "which restricted but did not entirely eliminate external contact, show lower rates "
         "(76.9% under disrupted → overtaken; 69.2% under disrupted → survived). Sakoku polities "
         "show 100% and 50% rates under the two assignments, reflecting the borderline case "
@@ -1265,7 +1270,7 @@ def create_manuscript(results):
         "Figure 4 presents the multivariate logistic regression results under the 7-country "
         "reclassification with disrupted → overtaken. External threat remains the strongest "
         "predictor of conquest (p < 0.01 across all scenarios), followed by institutional "
-        "quality and era (both p < 0.01). The maritime closure indicator is not independently "
+        "quality and era (both p < 0.01). The network closure indicator is not independently "
         "significant after controlling for these covariates. This pattern is informative: it "
         "suggests that closure operates not as a direct cause but through the same channels—"
         "technological stagnation, institutional decay, and heightened external vulnerability—"
@@ -1310,7 +1315,7 @@ def create_manuscript(results):
             "institutional_quality": "Institutional quality",
             "era_code": "Era (time)",
             "has_external_patron": "External patron",
-            "has_maritime_ban": "Maritime closure dummy",
+            "has_maritime_ban": "Network closure dummy",
         }
         coefs = lr_all_c["with_ban"]["coefs"]
         for var, label in var_labels.items():
@@ -1368,7 +1373,7 @@ def create_manuscript(results):
     )
     doc.add_paragraph(
         "The multivariate results complete the picture. External threat and institutional "
-        "quality are the strongest predictors of conquest, and the maritime closure indicator "
+        "quality are the strongest predictors of conquest, and the network closure indicator "
         "loses significance after their inclusion (Table 3, Fig. 4). This is precisely what "
         "a technology-gap mechanism would predict: closure does not kill states directly. "
         "Rather, it initiates a causal chain—technological stagnation erodes institutional "
@@ -1453,10 +1458,10 @@ def create_manuscript(results):
         "events and outcomes for all 96 polities in the dataset."
     )
 
-    doc.add_heading("6.3  Beyond maritime isolation: technological access exclusion "
+    doc.add_heading("6.3  Beyond geographic isolation: technological access exclusion "
                     "in the modern era", level=2)
     doc.add_paragraph(
-        "If the mechanism we identify is technology flow disruption rather than maritime closure "
+        "If the mechanism we identify is technology flow disruption rather than network closure "
         "per se, then the pattern should generalize beyond the age of sail. Each era has its own "
         "dominant technological platform—the infrastructure through which frontier knowledge "
         "diffuses across states. In antiquity, it was the Mediterranean trade routes and Silk "
@@ -1473,7 +1478,7 @@ def create_manuscript(results):
         "institutional reversals reshaped global inequality—both consistent with the view "
         "that early technological access has persistent, cumulative consequences. "
         "Geographic isolation no longer blocks physical trade—the completion of global shipping "
-        "and communication networks has largely eliminated technical network exclusion in its maritime form as a "
+        "and communication networks has largely eliminated geographic network exclusion as a "
         "threat. But a new form of structural exclusion has emerged: states may be cut off from "
         "the technological frontier not by mountains and oceans but by export controls on "
         "advanced semiconductors, by the concentration of AI training infrastructure in a "
@@ -1482,7 +1487,7 @@ def create_manuscript(results):
     )
     doc.add_paragraph(
         "The historical parallel is direct. Just as the Khmer Empire or the Timurid dynasty "
-        "could not access the maritime networks that carried military and institutional "
+        "could not access the exchange networks that carried military and institutional "
         "innovations, a contemporary state excluded from advanced semiconductor fabrication "
         "or AI model development may find itself on the wrong side of a widening technology "
         "gap. If the gap grows large enough, the eventual 'first contact'—whether military, "
@@ -1538,7 +1543,7 @@ def create_manuscript(results):
     doc.add_paragraph(
         f"The invariance of the stock–flow OR (1.774) across all reclassification scenarios "
         f"confirms that the core finding of the stock–flow framework—that stock-oriented "
-        f"polities face moderately higher conquest risk—is independent of how maritime "
+        f"polities face moderately higher conquest risk—is independent of how network "
         f"isolation is defined. The reclassification changes the closure subanalysis but "
         f"leaves the primary classification untouched. This separation is analytically "
         f"useful: it shows that the stock–flow distinction and the closure–conquest "
@@ -1671,7 +1676,7 @@ def create_manuscript(results):
 
     doc.add_paragraph(
         "This paper has shown that reclassifying seven technically excluded polities—those "
-        "severed from the maritime exchange networks of their era by geography and technology "
+        "severed from the dominant exchange networks of their era by geography and technology "
         "rather than by policy—transforms a non-significant association between closure and "
         "conquest into a significant one (p = 0.020), while the core stock–flow odds ratio "
         "remains unchanged (OR = 1.774). The 100% conquest rate among technically excluded "
@@ -1682,7 +1687,7 @@ def create_manuscript(results):
         "and military capacity needed to survive contact with more connected civilizations."
     )
     doc.add_paragraph(
-        "The broader implication is that this mechanism is not specific to maritime trade. "
+        "The broader implication is that this mechanism is not specific to any single network form. "
         "In every era, there exists a dominant network through which frontier technologies "
         "diffuse. Polities excluded from that network—whether by oceans, mountains, policy, "
         "or, in the contemporary period, by semiconductor export controls and AI infrastructure "
