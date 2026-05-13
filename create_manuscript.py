@@ -854,7 +854,19 @@ def create_manuscript(results):
         "conquest (Kennedy 1987; Findlay and O'Rourke 2007)."
     )
     doc.add_paragraph(
-        "The existing literature on trade openness and state survival has overwhelmingly focused "
+        "The existing literature offers two broad explanations for why states fail. One "
+        "emphasizes internal dynamics: Tainter (1988) argued that complex societies collapse "
+        "when the marginal returns to increasing complexity decline, and Acemoglu and Robinson "
+        "(2012) showed that extractive institutions—those that concentrate power and discourage "
+        "innovation—undermine long-run prosperity. The other emphasizes external connectivity: "
+        "trade openness, technology diffusion, and the consequences of isolation (Findlay and "
+        "O'Rourke 2007; Mokyr 2002). Our contribution lies at the intersection. We argue that "
+        "disconnection from the dominant exchange network is an upstream cause that erodes both "
+        "institutional quality and technological capacity—the very factors that the internal-"
+        "dynamics literature identifies as proximate causes of collapse."
+    )
+    doc.add_paragraph(
+        "The literature on trade and isolation has overwhelmingly focused "
         "on deliberate closure: the maritime prohibitions (haijin) of Ming China, the sakoku "
         "decree of Tokugawa Japan, the autarkic blocs of the Cold War. Deliberate closure is "
         "analytically convenient because it represents a policy choice with an identifiable agent. "
@@ -1361,7 +1373,11 @@ def create_manuscript(results):
         "a technology-gap mechanism would predict: closure does not kill states directly. "
         "Rather, it initiates a causal chain—technological stagnation erodes institutional "
         "adaptive capacity, which in turn leaves the polity unable to respond to external "
-        "threats. The mediating variables (external threat, institutional quality) absorb "
+        "threats. This causal ordering is consistent with Acemoglu and Robinson's (2012) "
+        "emphasis on institutions as the proximate determinant of national success, while "
+        "suggesting that network access is the deeper, upstream variable: exclusion degrades "
+        "the very institutions that the inclusive-institutions framework identifies as essential. "
+        "The mediating variables (external threat, institutional quality) absorb "
         "the explanatory power of the closure variable because they lie downstream in the "
         "causal pathway."
     )
@@ -1381,11 +1397,14 @@ def create_manuscript(results):
         "metallurgical innovations, navigational knowledge, and institutional models (Mokyr "
         "2002; Pomeranz 2000). Polities connected to these networks could adopt, adapt, and "
         "build upon innovations generated elsewhere. Polities severed from them could not. "
-        "Over generations, the technology gap widened. When contact eventually occurred—typically "
-        "through military expansion by the more connected civilization—the accumulated gap "
+        "Over generations, the technology gap widened\u2014a process analogous to the long-run "
+        "consequences of network disruption documented by Nunn (2008), who showed that regions "
+        "more heavily affected by the slave trade experienced persistent underdevelopment "
+        "centuries later. When contact with a more advanced civilization eventually occurred\u2014"
+        "often through military expansion\u2014the accumulated gap "
         "proved decisive. The Han Dynasty encountered Central Asian and eventually Roman-linked "
         "military traditions; the Khmer Empire faced the expanding Siamese and Vietnamese states "
-        "that were integrated into maritime trade networks; Kievan Rus' was overrun by the "
+        "that were integrated into maritime trade networks; Kievan Rus\u2019 was overrun by the "
         "Mongol armies that had absorbed the military technologies of multiple civilizations "
         "across Eurasia."
     )
@@ -1686,6 +1705,7 @@ def create_manuscript(results):
     refs = [
         "Acemoglu D, Johnson S, Robinson JA (2002) Reversal of fortune: geography and institutions in the making of the modern world income distribution. Q J Econ 117:1231–1294. https://doi.org/10.1162/003355302320935025",
         "Acemoglu D, Johnson S, Robinson JA (2005) Institutions as a fundamental cause of long-run growth. In: Aghion P, Durlauf SN (eds) Handbook of economic growth, vol 1A. Elsevier, Amsterdam, pp 385–472",
+        "Acemoglu D, Robinson JA (2012) Why nations fail: the origins of power, prosperity, and poverty. Crown, New York",
         "Acemoglu D, Restrepo P (2020) Robots and jobs: evidence from US labor markets. J Polit Econ 128:2188–2244. https://doi.org/10.1086/705716",
         "Arrighi G (1994) The long twentieth century: money, power, and the origins of our times. Verso, London",
         "Broadberry SN, Guan H (2026) Regional variation of GDP per head within China, 1080–1850. Explor Econ Hist 95:101567. https://doi.org/10.1016/j.eeh.2025.101567",
@@ -1699,8 +1719,11 @@ def create_manuscript(results):
         "Maddison A (2007) Contours of the world economy 1–2030 AD: essays in macro-economic history. Oxford University Press, Oxford",
         "Mokyr J (2002) The gifts of Athena: historical origins of the knowledge economy. Princeton University Press, Princeton",
         "North DC, Wallis JJ, Weingast BR (2009) Violence and social orders: a conceptual framework for interpreting recorded human history. Cambridge University Press, Cambridge",
+        "Nunn N (2008) The long-term effects of Africa's slave trades. Q J Econ 123:139–176. https://doi.org/10.1162/qjec.2008.123.1.139",
         "Pomeranz K (2000) The great divergence: China, Europe, and the making of the modern world economy. Princeton University Press, Princeton",
+        "Tainter JA (1988) The collapse of complex societies. Cambridge University Press, Cambridge",
         "Turchin P (2009) A theory for formation of large empires. J Glob Hist 4:191–217. https://doi.org/10.1017/S1740022809003192",
+        "Turchin P, Nefedov SA (2009) Secular cycles. Princeton University Press, Princeton",
     ]
     for ref in refs:
         p = doc.add_paragraph(ref)
