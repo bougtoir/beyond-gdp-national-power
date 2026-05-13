@@ -98,21 +98,26 @@ def create_cover_letter():
     )
 
     doc.add_paragraph(
-        "We believe this manuscript offers three features that may interest Cliometrica's "
+        "We believe this manuscript offers four features that may interest Cliometrica\u2019s "
         "readership. First, it provides a quantitative restatement of the long-recognized "
         "pattern that contact between civilizations at different technological levels tends "
-        "to end unfavorably for the less advanced party (Diamond 1997)—but grounded in a "
+        "to end unfavorably for the less advanced party (Diamond 1997)\u2014but grounded in a "
         "systematic, cross-historical dataset rather than selective case studies. Second, "
-        "the technology-flow mechanism we propose generalizes beyond maritime isolation: as "
-        "the dominant network shifts from sea lanes to semiconductors, AI infrastructure, "
-        "and advanced robotics, the same logic of cumulative divergence through exclusion "
-        "may apply to contemporary states. Third, the sensitivity analysis framework "
-        "(3 reclassification levels × 2 outcome assignments = 6 scenarios) provides a "
-        "replicable template for other researchers working with categorical historical data."
+        "we examine polities that pursued conditional closure\u2014restricting broad engagement "
+        "while deliberately maintaining selective technology transfer channels (e.g., "
+        "Tokugawa Japan\u2019s rangaku, Qing China\u2019s Canton system)\u2014and find mixed outcomes, "
+        "suggesting that the policy question is not binary (open or closed) but conditional "
+        "on which channels are preserved. Third, the technology-flow mechanism we propose "
+        "generalizes beyond maritime isolation: as the dominant network shifts from sea lanes "
+        "to semiconductors, AI infrastructure, and advanced robotics, the same logic of "
+        "cumulative divergence through exclusion may apply to contemporary states. Fourth, "
+        "the sensitivity analysis framework (3 reclassification levels \u00d7 2 outcome "
+        "assignments = 6 scenarios) provides a replicable template for other researchers "
+        "working with categorical historical data."
     )
 
     doc.add_paragraph(
-        "The manuscript comprises approximately 8,500 words of body text, 3 tables, "
+        "The manuscript comprises approximately 9,000 words of body text, 4 tables, "
         "4 figures, and one supplementary table (Table S1) listing all 96 polities with "
         "modern-country equivalents, periods of existence, and specific turning-point "
         "events. All data and code are available upon request."
