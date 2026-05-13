@@ -1,6 +1,6 @@
 """
 Generate Cliometrica manuscript: "Flow Disruption and State Collapse"
-Technical Maritime Ban sensitivity analysis with 7-country reclassification.
+Technical Network Exclusion sensitivity analysis with 7-country reclassification.
 
 Outputs:
   manuscript/manuscript.docx          — Main manuscript (Cliometrica format)
@@ -41,9 +41,9 @@ from pptx.enum.text import PP_ALIGN
 # ── project imports ──
 sys.path.insert(0, os.path.dirname(__file__))
 from data import load_data
-from sensitivity_technical_maritime_ban import (
+from sensitivity_technical_network_exclusion import (
     STRONG_CANDIDATES, MODERATE_CANDIDATES, RATIONALE,
-    apply_technical_maritime_ban, apply_disrupted_assignment,
+    apply_technical_network_exclusion, apply_disrupted_assignment,
     compute_confusion_stats, compute_closure_analysis,
     compute_logistic_with_closure, compute_mediation_paths,
 )
@@ -366,12 +366,12 @@ def run_analysis():
         "baseline": {"label": "Baseline", "df": df, "reclassified": []},
         "strong": {
             "label": "+5 strong",
-            "df": apply_technical_maritime_ban(df, STRONG_CANDIDATES),
+            "df": apply_technical_network_exclusion(df, STRONG_CANDIDATES),
             "reclassified": STRONG_CANDIDATES,
         },
         "all": {
             "label": "+7 all",
-            "df": apply_technical_maritime_ban(df, STRONG_CANDIDATES + MODERATE_CANDIDATES),
+            "df": apply_technical_network_exclusion(df, STRONG_CANDIDATES + MODERATE_CANDIDATES),
             "reclassified": STRONG_CANDIDATES + MODERATE_CANDIDATES,
         },
     }
@@ -388,7 +388,7 @@ def run_analysis():
             lr = compute_logistic_with_closure(df_p)
 
             # Fisher for ban vs no-ban
-            has_ban = df_p["closure_type"].isin(["maritime_ban", "technical_maritime_ban", "sakoku"])
+            has_ban = df_p["closure_type"].isin(["maritime_ban", "technical_network_exclusion", "sakoku"])
             ban_df = df_p[has_ban]
             no_ban_df = df_p[~has_ban]
             ban_rate = ban_df["outcome_binary"].mean() if len(ban_df) > 0 else 0
@@ -525,7 +525,7 @@ def create_figures(results):
     fig.savefig(os.path.join(FIG, "Fig2.png"), dpi=300, bbox_inches="tight")
     plt.close(fig)
 
-    # ── Fig 3: Policy vs Technical maritime ban conquest rates ──
+    # ── Fig 3: Policy vs Technical network exclusion conquest rates ──
     fig, axes = plt.subplots(1, 2, figsize=(12, 5))
     for ax_idx, (d_mode, d_label) in enumerate([
         ("as_conquered", "Disrupted → Overtaken"),
@@ -534,11 +534,11 @@ def create_figures(results):
         ax = axes[ax_idx]
         key_all = f"{d_mode}__all"
         df_p = apply_disrupted_assignment(
-            apply_technical_maritime_ban(results["df"], STRONG_CANDIDATES + MODERATE_CANDIDATES),
+            apply_technical_network_exclusion(results["df"], STRONG_CANDIDATES + MODERATE_CANDIDATES),
             d_mode
         )
-        categories = ["maritime_ban", "sakoku", "technical_maritime_ban", "bloc", "none"]
-        cat_labels = ["Policy\nmaritime ban", "Sakoku", "Technical\nmaritime ban", "Bloc", "None\n(open)"]
+        categories = ["maritime_ban", "sakoku", "technical_network_exclusion", "bloc", "none"]
+        cat_labels = ["Policy\nmaritime ban", "Sakoku", "Technical\nnetwork excl.", "Bloc", "None\n(open)"]
         rates = []
         counts = []
         for ct in categories:
@@ -709,7 +709,7 @@ def create_table_s1(results):
     era_map = {"ancient": "Ancient", "medieval": "Medieval", "early_modern": "Early Modern",
                "modern": "Modern", "20c": "20th Century", "contemporary": "Contemporary"}
     closure_map = {"none": "None", "maritime_ban": "Maritime ban", "sakoku": "Sakoku",
-                   "bloc": "Bloc", "technical_maritime_ban": "Technical maritime ban"}
+                   "bloc": "Bloc", "technical_network_exclusion": "Technical network exclusion"}
 
     for idx, (_, row) in enumerate(df.iterrows()):
         entity = row["entity"]
@@ -890,10 +890,10 @@ def create_manuscript(results):
         "its degree of closure from international networks. Second, we introduce the concept of "
         "'technical network exclusion,' defined as the involuntary disconnection of a polity from "
         "the dominant exchange network of its era due to geographic or technological constraints. "
-        "In the maritime age, this takes the form of a 'technical maritime ban'—the absence of "
-        "regular sea routes—but the underlying mechanism generalizes across eras. Third, we "
+        "In the maritime age, this took the form of geographic exclusion from sea routes, but "
+        "the underlying mechanism generalizes across eras. Third, we "
         "conduct a systematic sensitivity analysis in which seven technically excluded polities are "
-        "reclassified from 'no closure' to 'technical maritime ban,' testing whether the "
+        "reclassified from 'no closure' to 'technical network exclusion,' testing whether the "
         "closure–conquest association is an artifact of how isolation is defined."
     )
     doc.add_paragraph(
@@ -967,8 +967,9 @@ def create_manuscript(results):
         "trade by state policy (e.g., Ming haijin, Qing Canton system); (2) sakoku—near-total "
         "isolation enforced by national decree (Tokugawa Japan, Joseon Korea); (3) bloc—closure "
         "within a geopolitical or economic bloc (e.g., COMECON, imperial preference systems); "
-        "(4) technical maritime ban—involuntary isolation due to the absence of regular maritime "
-        "routes; and (5) none—no significant closure from prevailing exchange networks."
+        "(4) technical network exclusion—involuntary isolation from the dominant exchange network "
+        "of the era due to geographic or technological constraints (not limited to maritime routes); "
+        "and (5) none—no significant closure from prevailing exchange networks."
     )
     doc.add_paragraph(
         "Categories 1 through 3 represent deliberate closure: a policy choice by identifiable "
@@ -1030,8 +1031,9 @@ def create_manuscript(results):
     run = p.add_run("Table 1  ")
     run.bold = True
     run.font.size = Pt(10)
-    p.add_run("Technical maritime ban reclassification candidates. "
-              "'Strong' candidates had no regular maritime routes; 'Moderate' candidates had limited or uncertain maritime connectivity.").font.size = Pt(10)
+    p.add_run("Technical network exclusion reclassification candidates. "
+              "'Strong' candidates were structurally excluded from the dominant exchange network of their era; "
+              "'Moderate' candidates had limited or uncertain connectivity.").font.size = Pt(10)
 
     # ════════════════════════════════════════
     # 3. METHODS
@@ -1063,7 +1065,7 @@ def create_manuscript(results):
     doc.add_paragraph(
         "For each of the six scenarios, we construct a 2 × 2 table crossing closure status "
         "(maritime closure vs. open) against the binarized outcome. The 'maritime closure' "
-        "group includes polities coded as maritime ban, sakoku, or technical maritime ban. We "
+        "group includes polities coded as maritime ban, sakoku, or technical network exclusion. We "
         "compute one-sided Fisher's exact tests evaluating whether closure is associated with "
         "elevated conquest rates, and report relative risks alongside p-values."
     )
@@ -1452,7 +1454,7 @@ def create_manuscript(results):
         "institutional reversals reshaped global inequality—both consistent with the view "
         "that early technological access has persistent, cumulative consequences. "
         "Geographic isolation no longer blocks physical trade—the completion of global shipping "
-        "and communication networks has largely eliminated technical maritime exclusion as a "
+        "and communication networks has largely eliminated technical network exclusion in its maritime form as a "
         "threat. But a new form of structural exclusion has emerged: states may be cut off from "
         "the technological frontier not by mountains and oceans but by export controls on "
         "advanced semiconductors, by the concentration of AI training infrastructure in a "
@@ -1484,10 +1486,10 @@ def create_manuscript(results):
                     "resource-base transitions", level=2)
     # Compute stock x closure interaction: 4 cells with Fisher exact tests
     df_all_c = apply_disrupted_assignment(
-        apply_technical_maritime_ban(results["df"], STRONG_CANDIDATES + MODERATE_CANDIDATES),
+        apply_technical_network_exclusion(results["df"], STRONG_CANDIDATES + MODERATE_CANDIDATES),
         "as_conquered"
     )
-    has_closure = df_all_c["closure_type"].isin(["maritime_ban", "technical_maritime_ban", "sakoku"])
+    has_closure = df_all_c["closure_type"].isin(["maritime_ban", "technical_network_exclusion", "sakoku"])
     cells_64 = {}
     for dom in ["stock", "flow"]:
         for cl_label, cl_val in [("closed", True), ("open", False)]:

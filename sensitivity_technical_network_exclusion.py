@@ -69,11 +69,11 @@ DISRUPTED_ENTITIES = [
 ]
 
 
-def apply_technical_maritime_ban(df, candidates):
-    """指定候補を technical_maritime_ban に再分類したDataFrameを返す"""
+def apply_technical_network_exclusion(df, candidates):
+    """指定候補を technical_network_exclusion に再分類したDataFrameを返す"""
     df_new = df.copy()
     mask = df_new["entity"].isin(candidates)
-    df_new.loc[mask, "closure_type"] = "technical_maritime_ban"
+    df_new.loc[mask, "closure_type"] = "technical_network_exclusion"
     return df_new
 
 
@@ -155,7 +155,7 @@ def compute_logistic_with_closure(df, include_closure_binary=True):
 
     if include_closure_binary:
         df_work["has_maritime_ban"] = (
-            df_work["closure_type"].isin(["maritime_ban", "technical_maritime_ban", "sakoku"])
+            df_work["closure_type"].isin(["maritime_ban", "technical_network_exclusion", "sakoku"])
         ).astype(int)
 
     covariates_base = [
@@ -248,12 +248,12 @@ def run_sensitivity():
         },
         "strong": {
             "label": "+5国再分類",
-            "df": apply_technical_maritime_ban(df_base, STRONG_CANDIDATES),
+            "df": apply_technical_network_exclusion(df_base, STRONG_CANDIDATES),
             "reclassified": STRONG_CANDIDATES,
         },
         "all": {
             "label": "+7国再分類",
-            "df": apply_technical_maritime_ban(
+            "df": apply_technical_network_exclusion(
                 df_base, STRONG_CANDIDATES + MODERATE_CANDIDATES
             ),
             "reclassified": STRONG_CANDIDATES + MODERATE_CANDIDATES,
@@ -421,7 +421,7 @@ def run_sensitivity():
             print(f"\n    --- {c_sc['label']} ---")
 
             has_ban = df_prepared["closure_type"].isin(
-                ["maritime_ban", "technical_maritime_ban", "sakoku"]
+                ["maritime_ban", "technical_network_exclusion", "sakoku"]
             )
             ban_df = df_prepared[has_ban]
             no_ban_df = df_prepared[~has_ban]
@@ -535,17 +535,17 @@ def run_sensitivity():
 
             n_ban = sum(
                 v["n"] for k, v in ban_info.items()
-                if k in ["maritime_ban", "technical_maritime_ban", "sakoku"]
+                if k in ["maritime_ban", "technical_network_exclusion", "sakoku"]
             )
             ban_conquered = sum(
                 v["overtaken"] for k, v in ban_info.items()
-                if k in ["maritime_ban", "technical_maritime_ban", "sakoku"]
+                if k in ["maritime_ban", "technical_network_exclusion", "sakoku"]
             )
             ban_rate = ban_conquered / n_ban if n_ban > 0 else 0
 
             # Fisher for ban vs no-ban
             has_ban = df_prepared["closure_type"].isin(
-                ["maritime_ban", "technical_maritime_ban", "sakoku"]
+                ["maritime_ban", "technical_network_exclusion", "sakoku"]
             )
             ban_df = df_prepared[has_ban]
             no_ban_df = df_prepared[~has_ban]
