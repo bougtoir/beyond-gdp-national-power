@@ -1409,7 +1409,9 @@ def create_manuscript(results):
         "for Continental knowledge and technology. The Soviet Union, while sealed from the "
         "Western bloc, maintained extensive technology sharing within the Eastern bloc and "
         "invested heavily in indigenous research institutions. North Korea has preserved a "
-        "limited technology channel through its relationship with China."
+        "limited technology channel through its relationship with China. "
+        "(Full details of each polity's closure regime, technology channels, and outcomes "
+        "are recorded in Supplementary Table S1.)"
     )
     doc.add_paragraph(
         "The outcomes, however, are mixed. Early Qing China survived, but late Qing China—"
@@ -1425,7 +1427,9 @@ def create_manuscript(results):
         "condition the effectiveness of conditional closure. The policy question, then, is not "
         "binary (open or closed) but conditional, and the conditions under which selective "
         "channels suffice to prevent a fatal technology gap remain an open and consequential "
-        "problem for future research."
+        "problem for future research. Readers interested in tracing these cases in detail "
+        "are referred to Supplementary Table S1, which documents the specific turning-point "
+        "events and outcomes for all 96 polities in the dataset."
     )
 
     doc.add_heading("6.3  Beyond maritime isolation: technological access exclusion "
@@ -1601,7 +1605,11 @@ def create_manuscript(results):
         f"exclusion compound each other's risk, though the small cell sizes—particularly for "
         f"flow + closed (n = {fc['n']})—warrant caution. The stock + closed combination is "
         f"the only cell to reach a statistically significant difference from the baseline "
-        f"flow + open cell at conventional levels."
+        f"flow + open cell at conventional levels. "
+        f"Notably, {sc['s']} stock-oriented polities with closure survived despite their "
+        f"high-risk classification; their individual characteristics—including specific "
+        f"closure regimes, technology channels maintained, and the historical circumstances "
+        f"of their survival—are documented in Supplementary Table S1."
     )
     doc.add_paragraph(
         "An implication worth noting is that the stock–flow distinction is not permanently "
