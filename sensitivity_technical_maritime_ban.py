@@ -201,8 +201,17 @@ def compute_mediation_paths(df):
 
     paths = {}
 
-    # Path: stock → tech_position → outcome
     X_const = sm.add_constant(x)
+
+    # Total effect (mediator-independent)
+    c = None
+    try:
+        mod_total = sm.Logit(y, X_const).fit(disp=0)
+        c = mod_total.params.iloc[1]
+    except Exception:
+        pass
+
+    # Path: stock → tech_position → outcome
     try:
         mod_m = sm.OLS(df["tech_position"], X_const).fit()
         a = mod_m.params.iloc[1]
@@ -210,8 +219,6 @@ def compute_mediation_paths(df):
         mod_y = sm.Logit(y, XM).fit(disp=0, maxiter=100)
         b = mod_y.params["m"]
         c_prime = mod_y.params["x"]
-        mod_total = sm.Logit(y, X_const).fit(disp=0)
-        c = mod_total.params.iloc[1]
         paths["tech"] = {"a": a, "b": b, "ab": a * b, "c": c, "c_prime": c_prime}
     except Exception:
         paths["tech"] = None

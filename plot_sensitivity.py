@@ -153,7 +153,7 @@ def plot_fisher_p_progression():
     bars2 = ax2.bar(range(len(labels)), risk_diffs, color=colors2, edgecolor="white", linewidth=1.5)
     for bar, rd in zip(bars2, risk_diffs):
         ax2.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.3,
-                 f"+{rd:.1f}%", ha="center", va="bottom", fontsize=8, fontweight="bold")
+                 f"{rd:+.1f}%", ha="center", va="bottom", fontsize=8, fontweight="bold")
     ax2.set_ylabel("Risk Difference (ban - no ban, %pts)", fontsize=11)
     ax2.set_title("Conquest Risk Difference: Maritime Ban vs Open", fontsize=12, fontweight="bold")
     ax2.set_xticks(range(len(labels)))
