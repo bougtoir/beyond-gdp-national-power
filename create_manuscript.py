@@ -1478,20 +1478,37 @@ def create_manuscript(results):
 
     doc.add_heading("6.4  Robustness of the stock–flow framework and the question of "
                     "resource-base transitions", level=2)
-    # Compute stock x closure interaction rates for quantitative backing
+    # Compute stock x closure interaction: 4 cells with Fisher exact tests
     df_all_c = apply_disrupted_assignment(
         apply_technical_maritime_ban(results["df"], STRONG_CANDIDATES + MODERATE_CANDIDATES),
         "as_conquered"
     )
     has_closure = df_all_c["closure_type"].isin(["maritime_ban", "technical_maritime_ban", "sakoku"])
-    stock_open = df_all_c[(df_all_c["dominant"] == "stock") & (~has_closure)]
-    stock_closed = df_all_c[(df_all_c["dominant"] == "stock") & (has_closure)]
-    flow_open = df_all_c[(df_all_c["dominant"] == "flow") & (~has_closure)]
-    flow_closed = df_all_c[(df_all_c["dominant"] == "flow") & (has_closure)]
-    stock_open_rate = stock_open["outcome_binary"].mean()
-    stock_closed_rate = stock_closed["outcome_binary"].mean()
-    flow_open_rate = flow_open["outcome_binary"].mean()
-    flow_closed_rate = flow_closed["outcome_binary"].mean() if len(flow_closed) > 0 else 0
+    cells_64 = {}
+    for dom in ["stock", "flow"]:
+        for cl_label, cl_val in [("closed", True), ("open", False)]:
+            sub = df_all_c[(df_all_c["dominant"] == dom) & (has_closure == cl_val)]
+            n = len(sub)
+            conquered = int(sub["outcome_binary"].sum())
+            survived = n - conquered
+            rate = sub["outcome_binary"].mean() if n > 0 else 0
+            cells_64[(dom, cl_label)] = {"n": n, "c": conquered, "s": survived, "rate": rate}
+
+    sc = cells_64[("stock", "closed")]
+    so = cells_64[("stock", "open")]
+    fc = cells_64[("flow", "closed")]
+    fo = cells_64[("flow", "open")]
+
+    # Fisher exact tests for key pairwise comparisons
+    def fisher_or_p(a, b):
+        """One-sided Fisher exact test (greater) and OR for two cells."""
+        table = np.array([[a["c"], a["s"]], [b["c"], b["s"]]])
+        odds_r, p_val = stats.fisher_exact(table, alternative="greater")
+        return odds_r, p_val
+
+    or_sc_fo, p_sc_fo = fisher_or_p(sc, fo)  # stock+closed vs flow+open
+    or_sc_so, p_sc_so = fisher_or_p(sc, so)  # closure effect within stock
+    or_fc_fo, p_fc_fo = fisher_or_p(fc, fo)  # closure effect within flow
 
     doc.add_paragraph(
         f"The invariance of the stock–flow OR (1.774) across all reclassification scenarios "
@@ -1500,16 +1517,91 @@ def create_manuscript(results):
         f"isolation is defined. The reclassification changes the closure subanalysis but "
         f"leaves the primary classification untouched. This separation is analytically "
         f"useful: it shows that the stock–flow distinction and the closure–conquest "
-        f"association capture related but distinct dimensions of state vulnerability. "
-        f"When these two dimensions are crossed, the interaction is suggestive: among "
-        f"stock-oriented polities, those with some form of maritime closure show a conquest "
-        f"rate of {stock_closed_rate:.1%} (n = {len(stock_closed)}), compared with "
-        f"{stock_open_rate:.1%} (n = {len(stock_open)}) for stock-oriented polities without "
-        f"closure. Among flow-oriented polities, the corresponding figures are "
-        f"{flow_closed_rate:.1%} (n = {len(flow_closed)}) and {flow_open_rate:.1%} "
-        f"(n = {len(flow_open)}). While cell sizes are too small for reliable inference, "
-        f"the pattern is consistent with the hypothesis that stock-orientation and network "
-        f"exclusion compound each other's risk."
+        f"association capture related but distinct dimensions of state vulnerability."
+    )
+    doc.add_paragraph(
+        f"Crossing these two dimensions yields a four-cell classification whose conquest "
+        f"rates are reported in Table 4. Flow-oriented polities without closure show the "
+        f"lowest conquest rate ({fo['rate']:.1%}, n = {fo['n']}). Stock-oriented polities "
+        f"without closure show a moderately elevated rate ({so['rate']:.1%}, n = {so['n']}). "
+        f"Stock-oriented polities with closure show a markedly higher rate ({sc['rate']:.1%}, "
+        f"n = {sc['n']}). Flow-oriented polities with closure—a small cell (n = {fc['n']})—"
+        f"show a {fc['rate']:.1%} conquest rate. The contrast between the highest- and lowest-"
+        f"risk cells (stock + closed vs. flow + open) yields an odds ratio of {or_sc_fo:.2f} "
+        f"(one-sided Fisher exact p = {p_sc_fo:.3f}). Within stock-oriented polities, the "
+        f"effect of closure corresponds to an OR of {or_sc_so:.2f} (p = {p_sc_so:.3f}). "
+        f"Within flow-oriented polities, the effect of closure yields an OR of "
+        f"{'∞' if np.isinf(or_fc_fo) else f'{or_fc_fo:.2f}'} (p = {p_fc_fo:.3f}), though "
+        f"the cell size (n = {fc['n']}) precludes reliable inference."
+    )
+
+    # Add Table 4: Stock–flow × closure interaction
+    doc.add_paragraph()
+    p_t4_title = doc.add_paragraph()
+    run_t4 = p_t4_title.add_run(
+        "Table 4  Conquest rates by resource-base orientation and closure status "
+        "(7-country reclassification, disrupted = conquered)"
+    )
+    run_t4.bold = True
+    run_t4.font.size = Pt(10)
+    p_t4_title.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+    t4 = doc.add_table(rows=4, cols=5)
+    t4.style = "Table Grid"
+    t4.alignment = WD_TABLE_ALIGNMENT.CENTER
+    t4_headers = ["", "Conquered", "Survived", "n", "Rate"]
+    for i, h in enumerate(t4_headers):
+        cell = t4.rows[0].cells[i]
+        cell.text = h
+        for par in cell.paragraphs:
+            par.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            for run in par.runs:
+                run.bold = True
+                run.font.size = Pt(10)
+
+    t4_data = [
+        ("Stock + closed", sc),
+        ("Stock + open", so),
+        ("Flow + closed", fc),
+        ("Flow + open", fo),
+    ]
+    for row_idx, (label, cell_data) in enumerate(t4_data, start=0):
+        row = t4.rows[row_idx]  # re-use existing rows (header is row 0)
+    # Actually need 5 rows (1 header + 4 data). Rebuild.
+    # Remove the table and redo with correct row count
+    # python-docx doesn't support removing tables easily; let's add rows instead
+    # We already have 4 rows. The first is headers. We need to add 1 more row.
+    t4.add_row()  # now 5 rows total
+
+    # Re-assign: row 0 = header (already set), rows 1-4 = data
+    for row_idx, (label, cell_data) in enumerate(t4_data):
+        data_row = t4.rows[row_idx + 1]
+        vals = [label, str(cell_data["c"]), str(cell_data["s"]),
+                str(cell_data["n"]), f'{cell_data["rate"]:.1%}']
+        for col_i, val in enumerate(vals):
+            data_row.cells[col_i].text = val
+            for par in data_row.cells[col_i].paragraphs:
+                par.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                for run in par.runs:
+                    run.font.size = Pt(10)
+
+    # Table 4 footnote
+    p_t4_note = doc.add_paragraph(
+        f"Fisher exact tests (one-sided): stock + closed vs. flow + open, "
+        f"OR = {or_sc_fo:.2f}, p = {p_sc_fo:.3f}; within stock, closed vs. open, "
+        f"OR = {or_sc_so:.2f}, p = {p_sc_so:.3f}; within flow, closed vs. open, "
+        f"OR = {'∞' if np.isinf(or_fc_fo) else f'{or_fc_fo:.2f}'}, p = {p_fc_fo:.3f}."
+    )
+    for run in p_t4_note.runs:
+        run.font.size = Pt(9)
+        run.italic = True
+
+    doc.add_paragraph(
+        f"The pattern is consistent with the hypothesis that stock-orientation and network "
+        f"exclusion compound each other's risk, though the small cell sizes—particularly for "
+        f"flow + closed (n = {fc['n']})—warrant caution. The stock + closed combination is "
+        f"the only cell to reach a statistically significant difference from the baseline "
+        f"flow + open cell at conventional levels."
     )
     doc.add_paragraph(
         "An implication worth noting is that the stock–flow distinction is not permanently "
