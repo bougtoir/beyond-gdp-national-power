@@ -686,7 +686,8 @@ def create_table_s1(results):
         "era classification, dominant strategy (stock or flow), closure type, outcome "
         "(overtaken/disrupted/survived), and the specific turning-point event that determined the outcome."
     )
-    p.style.font.size = Pt(9)
+    for run in p.runs:
+        run.font.size = Pt(9)
 
     df = results["df"]
     headers = ["#", "Polity", "Modern Country", "Period", "Era", "Dominant",
@@ -819,7 +820,8 @@ def create_manuscript(results):
         "these technological platforms may face analogous vulnerabilities."
     )
     p = doc.add_paragraph(abstract_text)
-    p.style.font.size = Pt(11)
+    for run in p.runs:
+        run.font.size = Pt(11)
 
     # ── Keywords ──
     p = doc.add_paragraph()
@@ -1338,11 +1340,17 @@ def create_manuscript(results):
     doc.add_paragraph(
         "The dose–response pattern in Figure 3 reinforces this interpretation. Technical "
         "exclusion (zero technology transfer) produces a 100% conquest rate. Policy-based "
-        "maritime bans, which restrict but do not eliminate technology flow—Tokugawa Japan, "
-        "for instance, maintained access to Western science through rangaku at Dejima—show "
-        "conquest rates below 80%. Bloc closures, which preserve substantial within-bloc "
-        "technology sharing, show the lowest rates among closure types. The ordering of "
-        "conquest risk mirrors the ordering of technology flow disruption."
+        "maritime bans, which restrict but do not eliminate technology flow, show conquest "
+        "rates below 80%. The case of Tokugawa Japan is particularly instructive: despite "
+        "the comprehensive closure of sakoku, the Tokugawa regime deliberately maintained "
+        "a narrow conduit for Western scientific and technical knowledge (rangaku) through "
+        "the Dutch trading post at Dejima. This selective preservation of a technology "
+        "transfer channel—even within an otherwise closed system—appears to have made a "
+        "material difference. Japan was disrupted by the forced opening of 1853–54 but was "
+        "not conquered; it reconstituted itself as the Meiji state and rapidly closed the "
+        "technology gap. Bloc closures, which preserve substantial within-bloc technology "
+        "sharing, show the lowest rates among closure categories. The ordering of conquest "
+        "risk mirrors the ordering of technology flow disruption."
     )
     doc.add_paragraph(
         "The multivariate results complete the picture. External threat and institutional "
@@ -1386,6 +1394,38 @@ def create_manuscript(results):
         "correspondingly, were more likely to survive or reconstitute after disruption. The "
         "implication is that what determines the outcome of civilizational encounter is the "
         "degree and duration of technology flow disruption that preceded it."
+    )
+    doc.add_paragraph(
+        "This finding has a corollary that is worth stating explicitly. If the critical "
+        "variable is not closure itself but the residual technology flow that closure permits, "
+        "then polities that close their borders while deliberately maintaining selective "
+        "channels for frontier knowledge occupy a qualitatively different position from those "
+        "that are totally severed. Our dataset contains several instances of such conditional "
+        "closure. Tokugawa Japan preserved access to Western science through rangaku at Dejima "
+        "and was disrupted but not conquered, reconstituting itself as the Meiji state. Early "
+        "Qing China maintained the Canton system—a single, tightly controlled port of trade "
+        "through which some foreign knowledge filtered—and survived the Kangxi–Qianlong era "
+        "intact. Joseon Korea sustained tributary trade with China, which served as a conduit "
+        "for Continental knowledge and technology. The Soviet Union, while sealed from the "
+        "Western bloc, maintained extensive technology sharing within the Eastern bloc and "
+        "invested heavily in indigenous research institutions. North Korea has preserved a "
+        "limited technology channel through its relationship with China."
+    )
+    doc.add_paragraph(
+        "The outcomes, however, are mixed. Early Qing China survived, but late Qing China—"
+        "operating under the same Canton system—was semi-colonized after the Opium Wars. "
+        "Tokugawa Japan survived as a political entity, but Joseon Korea, despite its Chinese "
+        "conduit, was annexed by Japan in 1910. The Soviet Union collapsed internally despite "
+        "its bloc-level technology sharing, while North Korea has persisted under extreme "
+        "isolation with minimal Chinese patronage. These divergent outcomes suggest that the "
+        "mere existence of a selective channel does not guarantee survival; unmeasured factors—"
+        "the breadth and relevance of the knowledge flowing through the channel, the domestic "
+        "capacity to absorb and adapt that knowledge, the pace of change at the technological "
+        "frontier, and institutional dynamics that our dataset does not capture—likely "
+        "condition the effectiveness of conditional closure. The policy question, then, is not "
+        "binary (open or closed) but conditional, and the conditions under which selective "
+        "channels suffice to prevent a fatal technology gap remain an open and consequential "
+        "problem for future research."
     )
 
     doc.add_heading("6.3  Beyond maritime isolation: technological access exclusion "
@@ -1436,15 +1476,54 @@ def create_manuscript(results):
         "be most consequential."
     )
 
-    doc.add_heading("6.4  Robustness of the stock–flow framework", level=2)
+    doc.add_heading("6.4  Robustness of the stock–flow framework and the question of "
+                    "resource-base transitions", level=2)
+    # Compute stock x closure interaction rates for quantitative backing
+    df_all_c = apply_disrupted_assignment(
+        apply_technical_maritime_ban(results["df"], STRONG_CANDIDATES + MODERATE_CANDIDATES),
+        "as_conquered"
+    )
+    has_closure = df_all_c["closure_type"].isin(["maritime_ban", "technical_maritime_ban", "sakoku"])
+    stock_open = df_all_c[(df_all_c["dominant"] == "stock") & (~has_closure)]
+    stock_closed = df_all_c[(df_all_c["dominant"] == "stock") & (has_closure)]
+    flow_open = df_all_c[(df_all_c["dominant"] == "flow") & (~has_closure)]
+    flow_closed = df_all_c[(df_all_c["dominant"] == "flow") & (has_closure)]
+    stock_open_rate = stock_open["outcome_binary"].mean()
+    stock_closed_rate = stock_closed["outcome_binary"].mean()
+    flow_open_rate = flow_open["outcome_binary"].mean()
+    flow_closed_rate = flow_closed["outcome_binary"].mean() if len(flow_closed) > 0 else 0
+
     doc.add_paragraph(
-        "The invariance of the stock–flow OR (1.774) across all reclassification scenarios "
-        "confirms that the core finding of the stock–flow framework—that stock-oriented "
-        "polities face moderately higher conquest risk—is independent of how maritime "
-        "isolation is defined. The reclassification changes the closure subanalysis but "
-        "leaves the primary classification untouched. This separation is analytically "
-        "useful: it shows that the stock–flow distinction and the closure–conquest "
-        "association capture related but distinct dimensions of state vulnerability."
+        f"The invariance of the stock–flow OR (1.774) across all reclassification scenarios "
+        f"confirms that the core finding of the stock–flow framework—that stock-oriented "
+        f"polities face moderately higher conquest risk—is independent of how maritime "
+        f"isolation is defined. The reclassification changes the closure subanalysis but "
+        f"leaves the primary classification untouched. This separation is analytically "
+        f"useful: it shows that the stock–flow distinction and the closure–conquest "
+        f"association capture related but distinct dimensions of state vulnerability. "
+        f"When these two dimensions are crossed, the interaction is suggestive: among "
+        f"stock-oriented polities, those with some form of maritime closure show a conquest "
+        f"rate of {stock_closed_rate:.1%} (n = {len(stock_closed)}), compared with "
+        f"{stock_open_rate:.1%} (n = {len(stock_open)}) for stock-oriented polities without "
+        f"closure. Among flow-oriented polities, the corresponding figures are "
+        f"{flow_closed_rate:.1%} (n = {len(flow_closed)}) and {flow_open_rate:.1%} "
+        f"(n = {len(flow_open)}). While cell sizes are too small for reliable inference, "
+        f"the pattern is consistent with the hypothesis that stock-orientation and network "
+        f"exclusion compound each other's risk."
+    )
+    doc.add_paragraph(
+        "An implication worth noting is that the stock–flow distinction is not permanently "
+        "fixed for any given state. Polities can transition from flow-oriented to stock-oriented "
+        "resource bases—or vice versa—as economic structures, demographic conditions, and "
+        "institutional incentives evolve. A state that was historically flow-oriented (trade-"
+        "dependent, outward-looking, innovation-absorbing) but that gradually shifts toward "
+        "reliance on accumulated domestic assets—physical capital, territorial resources, "
+        "existing institutional infrastructure—moves into the higher-risk stock category. "
+        "If such a transition coincides with reduced engagement in the dominant technological "
+        "network of the era, the compounding of stock-orientation and network exclusion could "
+        "amplify vulnerability. Our dataset cannot test this dynamic directly, as polities are "
+        "coded at a single point in time, but the theoretical interaction between resource-base "
+        "transition and network access merits further investigation."
     )
 
     doc.add_heading("6.5  Limitations", level=2)
@@ -1490,7 +1569,11 @@ def create_manuscript(results):
         "historical record we document provides a quantitative baseline for assessing this "
         "risk. Whether the tragedy of first contact between unequally developed civilizations "
         "will find new expression in the age of artificial intelligence is a question that "
-        "the coming decades will answer; our analysis suggests it is one worth asking."
+        "the coming decades will answer; our analysis suggests it is one worth asking. "
+        "Equally pressing is the converse question suggested by the Tokugawa precedent: "
+        "whether a state that recognizes the risk of network exclusion can, through "
+        "deliberate maintenance of selective technology channels, prevent the accumulation "
+        "of a fatal gap—even while restricting broader engagement with the outside world."
     )
 
     # ════════════════════════════════════════
@@ -1519,7 +1602,8 @@ def create_manuscript(results):
     ]
     for ref in refs:
         p = doc.add_paragraph(ref)
-        p.style.font.size = Pt(11)
+        for run in p.runs:
+            run.font.size = Pt(11)
         p.paragraph_format.first_line_indent = Cm(-1)
         p.paragraph_format.left_indent = Cm(1)
 
