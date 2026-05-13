@@ -499,6 +499,7 @@ def create_figures(results):
 
     # ── Fig 2: Fisher p-value progression ──
     fig, ax = plt.subplots(figsize=(8, 5))
+    all_ps = []
     for d_mode, d_label, color, marker in [
         ("as_conquered", "Disrupted → Overtaken", "#c0392b", "o"),
         ("as_survived", "Disrupted → Survived", "#2980b9", "s"),
@@ -507,6 +508,7 @@ def create_figures(results):
         for c_key in ["baseline", "strong", "all"]:
             key = f"{d_mode}__{c_key}"
             ps.append(results["scenarios"][key]["fisher_ban_p"])
+        all_ps.extend(ps)
         ax.plot([0, 5, 7], ps, marker=marker, linewidth=2, markersize=8, label=d_label, color=color)
 
     ax.axhline(y=0.05, color="gray", linestyle="--", linewidth=1, label="p = 0.05 threshold")
@@ -514,7 +516,7 @@ def create_figures(results):
     ax.set_ylabel("Fisher's exact test p-value (one-sided)")
     ax.set_xticks([0, 5, 7])
     ax.set_xticklabels(["0\n(Baseline)", "5\n(Strong)", "7\n(All)"])
-    ax.set_ylim(-0.01, max(0.25, max(ps) + 0.05))
+    ax.set_ylim(-0.01, max(0.25, max(all_ps) + 0.05))
     ax.legend(fontsize=9)
     ax.set_title("Fig. 2  Fisher's Exact Test p-values: Maritime Closure → Conquest", fontweight="bold")
     ax.spines["top"].set_visible(False)
