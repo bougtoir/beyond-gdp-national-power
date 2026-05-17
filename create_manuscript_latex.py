@@ -471,7 +471,6 @@ def create_manuscript_tex(results):
 
     # Author
     W(r"\author*[1]{\fnm{Tatsuki} \sur{Onishi}}\email{bougtoir@gmail.com}")
-    W(r"\orcid{0000-0001-7261-9062}")
     W()
     W(r"\affil*[1]{\orgdiv{Data Science AI Innovation Research Promotion Center}, "
       r"\orgname{Shiga University}, "
@@ -1215,6 +1214,10 @@ def create_manuscript_tex(results):
     W(r"\subsection*{Acknowledgments}")
     W(r"None.")
     W()
+    W(r"\subsection*{ORCID}")
+    W(r"Tatsuki Onishi: \href{https://orcid.org/0000-0001-7261-9062}"
+      r"{0000-0001-7261-9062}")
+    W()
     W(r"\subsection*{Author Contributions}")
     W(r"O.T.: Conceptualization, Methodology, Software, Formal analysis, "
       r"Writing --- original draft, Writing --- review \& editing.")
@@ -1272,8 +1275,10 @@ def create_table_s1_latex(results):
     tex.append(r"\usepackage{array}")
     tex.append(r"\usepackage[T1]{fontenc}")
     tex.append(r"\begin{document}")
-    tex.append(r"\footnotesize")
-    tex.append(r"\begin{longtable}{rlllllllp{6cm}}")
+    tex.append(r"\scriptsize")
+    tex.append(r"\setlength{\LTleft}{0pt}")
+    tex.append(r"\setlength{\LTright}{0pt}")
+    tex.append(r"\begin{longtable}{@{}r l l l l l l l p{5.5cm}@{}}")
     tex.append(r"\caption{Supplementary Table S1: Full dataset of 96 historical polities.} \\")
     tex.append(r"\toprule")
     tex.append(r"\# & Polity & Modern Country & Period & Era & Dominant & Closure & Outcome & Turning-Point Event \\")
@@ -1436,19 +1441,6 @@ def main():
     if os.path.exists(bst_src):
         shutil.copy2(bst_src, bst_dst)
         print(f"  Copied sn-basic.bst to {OUT}")
-
-    # Create ORCID logo (required by sn-jnl.cls \orcid command)
-    orcid_eps = os.path.join(OUT, "Orcidlogo.eps")
-    with open(orcid_eps, "w") as f:
-        f.write("%!PS-Adobe-3.0 EPSF-3.0\n"
-                "%%BoundingBox: 0 0 10 10\n"
-                "%%EndComments\n"
-                "newpath 5 5 4 0 360 arc "
-                "0.65 0.81 0.22 setrgbcolor fill\n"
-                "showpage\n%%EOF\n")
-    orcid_pdf = os.path.join(OUT, "Orcidlogo-eps-converted-to.pdf")
-    subprocess.run(["ps2pdf", "-dEPSCrop", orcid_eps, orcid_pdf],
-                   capture_output=True, timeout=30)
 
     # Compile LaTeX → PDF
     print("Compiling manuscript PDF...")
