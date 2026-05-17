@@ -470,11 +470,13 @@ def create_manuscript_tex(results):
     W()
 
     # Author
-    W(r"\author*[1]{\fnm{Author} \sur{Name}}\email{author@example.com}")
+    W(r"\author*[1]{\fnm{Tatsuki} \sur{Onishi}}\email{bougtoir@gmail.com}")
+    W(r"\orcid{0000-0001-7261-9062}")
     W()
-    W(r"\affil*[1]{\orgdiv{Department}, \orgname{University}, "
-      r"\orgaddress{\street{Street}, \city{City}, "
-      r"\postcode{00000}, \state{State}, \country{Country}}}")
+    W(r"\affil*[1]{\orgdiv{Data Science AI Innovation Research Promotion Center}, "
+      r"\orgname{Shiga University}, "
+      r"\orgaddress{\street{1-1-1 Bamba}, \city{Hikone}, "
+      r"\postcode{522-8522}, \state{Shiga}, \country{Japan}}}")
     W()
 
     # Abstract
@@ -1205,15 +1207,29 @@ def create_manuscript_tex(results):
     W(r"\section*{Statements and Declarations}")
     W()
     W(r"\subsection*{Funding}")
-    W(r"[To be completed by author]")
+    W(r"This work received no external funding.")
     W()
     W(r"\subsection*{Competing Interests}")
-    W(r"The author declares no competing interests.")
+    W(r"The author declares no conflicts of interest.")
+    W()
+    W(r"\subsection*{Acknowledgments}")
+    W(r"None.")
+    W()
+    W(r"\subsection*{Author Contributions}")
+    W(r"O.T.: Conceptualization, Methodology, Software, Formal analysis, "
+      r"Writing --- original draft, Writing --- review \& editing.")
+    W()
+    W(r"\subsection*{Declaration of Generative Artificial Intelligence (AI) in Scientific Writing}")
+    W(r"We used devin.ai to help with formatting the text and choosing words that suited "
+      r"the tone, and to help writing codes. The author takes full responsibility for the "
+      r"accuracy and content of the manuscript.")
     W()
     W(r"\subsection*{Data Availability}")
-    W(r"The complete dataset and analysis code are available at [repository URL]. "
+    W(r"The complete dataset and analysis code are available at "
+      r"\url{https://github.com/bougtoir/gdp-tempo-paper}. "
       f"Supplementary Table~S1 provides the full dataset of {N} polities with all coded "
-      r"variables.")
+      r"variables. This study uses only publicly available historical data; "
+      r"we gratefully acknowledge the open-data sources on which the dataset is built.")
     W()
 
     # JEL
@@ -1307,8 +1323,11 @@ def create_cover_letter_tex():
     tex.append(r"\usepackage[margin=2.5cm]{geometry}")
     tex.append(r"\usepackage[T1]{fontenc}")
     tex.append(r"\usepackage{hyperref}")
-    tex.append(r"\signature{Author Name\\Affiliation\\Email}")
-    tex.append(r"\address{Author Name\\Affiliation\\City, Country\\Email}")
+    tex.append(r"\signature{Tatsuki Onishi\\Data Science AI Innovation Research Promotion Center, "
+               r"Shiga University\\bougtoir@gmail.com}")
+    tex.append(r"\address{Tatsuki Onishi\\Data Science AI Innovation Research Promotion Center, "
+               r"Shiga University\\1-1-1 Bamba, Hikone, Shiga 522-8522, Japan\\"
+               r"bougtoir@gmail.com}")
     tex.append(r"\begin{document}")
     tex.append(r"\begin{letter}{Prof.\ Claude Diebolt\\Managing Editor, \emph{Cliometrica}}")
     tex.append(r"\opening{Dear Professor Diebolt,}")
@@ -1417,6 +1436,19 @@ def main():
     if os.path.exists(bst_src):
         shutil.copy2(bst_src, bst_dst)
         print(f"  Copied sn-basic.bst to {OUT}")
+
+    # Create ORCID logo (required by sn-jnl.cls \orcid command)
+    orcid_eps = os.path.join(OUT, "Orcidlogo.eps")
+    with open(orcid_eps, "w") as f:
+        f.write("%!PS-Adobe-3.0 EPSF-3.0\n"
+                "%%BoundingBox: 0 0 10 10\n"
+                "%%EndComments\n"
+                "newpath 5 5 4 0 360 arc "
+                "0.65 0.81 0.22 setrgbcolor fill\n"
+                "showpage\n%%EOF\n")
+    orcid_pdf = os.path.join(OUT, "Orcidlogo-eps-converted-to.pdf")
+    subprocess.run(["ps2pdf", "-dEPSCrop", orcid_eps, orcid_pdf],
+                   capture_output=True, timeout=30)
 
     # Compile LaTeX → PDF
     print("Compiling manuscript PDF...")
