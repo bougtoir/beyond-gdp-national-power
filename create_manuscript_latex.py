@@ -470,7 +470,7 @@ def create_manuscript_tex(results):
     W()
 
     # Author
-    W(r"\author*[1]{\fnm{Tatsuki} \sur{Onishi}}\email{bougtoir@gmail.com}")
+    W(r"\author*[1]{\fnm{Onishi} \sur{Tatsuki}}\email{bougtoir@gmail.com}")
     W()
     W(r"\affil*[1]{\orgdiv{Data Science AI Innovation Research Promotion Center}, "
       r"\orgname{Shiga University}, "
@@ -1215,7 +1215,7 @@ def create_manuscript_tex(results):
     W(r"None.")
     W()
     W(r"\subsection*{ORCID}")
-    W(r"Tatsuki Onishi: \href{https://orcid.org/0000-0001-7261-9062}"
+    W(r"Onishi Tatsuki: \href{https://orcid.org/0000-0001-7261-9062}"
       r"{0000-0001-7261-9062}")
     W()
     W(r"\subsection*{Author Contributions}")
@@ -1328,9 +1328,9 @@ def create_cover_letter_tex():
     tex.append(r"\usepackage[margin=2.5cm]{geometry}")
     tex.append(r"\usepackage[T1]{fontenc}")
     tex.append(r"\usepackage{hyperref}")
-    tex.append(r"\signature{Tatsuki Onishi\\Data Science AI Innovation Research Promotion Center, "
+    tex.append(r"\signature{Onishi Tatsuki\\Data Science AI Innovation Research Promotion Center, "
                r"Shiga University\\bougtoir@gmail.com}")
-    tex.append(r"\address{Tatsuki Onishi\\Data Science AI Innovation Research Promotion Center, "
+    tex.append(r"\address{Onishi Tatsuki\\Data Science AI Innovation Research Promotion Center, "
                r"Shiga University\\1-1-1 Bamba, Hikone, Shiga 522-8522, Japan\\"
                r"bougtoir@gmail.com}")
     tex.append(r"\begin{document}")
