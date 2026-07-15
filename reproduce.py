@@ -57,6 +57,7 @@ FORBIDDEN_TEXT = [
     "/" + "/".join(["home", "ubuntu", "cliopatria"]),
     "wiki" + "pedia",
 ]
+EXCLUDED_SCAN_DIRECTORIES = {".git", ".venv", "venv", "__pycache__"}
 
 
 def _csv_row_count(relative_path: str) -> int:
@@ -81,8 +82,10 @@ def verify_outputs() -> None:
 
     source_extensions = {".py", ".md", ".csv", ".tex", ".bib", ".yml", ".yaml"}
     for path in PROJECT_DIR.rglob("*"):
+        relative_path = path.relative_to(PROJECT_DIR)
         if (
             not path.is_file()
+            or any(part in EXCLUDED_SCAN_DIRECTORIES for part in relative_path.parts)
             or path.suffix.lower() not in source_extensions
             or "springer-template" in path.parts
         ):
