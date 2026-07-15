@@ -90,6 +90,15 @@ and brace counts are balanced. The repository-level `verify_outputs()` check
 also passes after the report's excluded-source label was phrased without the
 forbidden literal.
 
+The fix was then regenerated from a fresh clone of public feature-branch commit
+`4bd343ae3ab6e0c3b4b96e63e202450c5bfc4c30`. The generator exited 0, the exact
+output `86.4\%, Fisher $p = 0.0204$.` was present, and the broken `\%$,` token
+was absent from the source and every generated LaTeX file. An adversarial
+in-memory probe reintroduced the old token and the delimiter checker rejected
+it at manuscript line 137; the corrected file and `verify_outputs()` both
+passed. Direct PDF compilation remains untested because `pdflatex` is not
+installed.
+
 ## Reproduction determinism
 
 The clean public run left the tracked LaTeX, BibTeX, JSON report, CSV inputs
