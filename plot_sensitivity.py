@@ -48,9 +48,16 @@ def plot_conquest_rates_by_closure():
 
     closure_scenarios = {
         "Baseline": (df_base, []),
-        "+5 tech excl": (apply_technical_network_exclusion(df_base, STRONG_CANDIDATES), STRONG_CANDIDATES),
-        "+7 tech excl": (apply_technical_network_exclusion(df_base, STRONG_CANDIDATES + MODERATE_CANDIDATES),
-                        STRONG_CANDIDATES + MODERATE_CANDIDATES),
+        f"+{len(STRONG_CANDIDATES)} tech excl": (
+            apply_technical_network_exclusion(df_base, STRONG_CANDIDATES),
+            STRONG_CANDIDATES,
+        ),
+        f"+{len(STRONG_CANDIDATES + MODERATE_CANDIDATES)} tech excl": (
+            apply_technical_network_exclusion(
+                df_base, STRONG_CANDIDATES + MODERATE_CANDIDATES
+            ),
+            STRONG_CANDIDATES + MODERATE_CANDIDATES,
+        ),
     }
 
     disrupted_modes = {
@@ -243,7 +250,7 @@ def plot_policy_vs_technical():
         ax.spines["top"].set_visible(False)
         ax.spines["right"].set_visible(False)
 
-    fig.suptitle("Overtaken Rate by Closure Type (All Candidates Reclassified, N=96)\n"
+    fig.suptitle(f"Overtaken Rate by Closure Type (All Candidates Reclassified, N={len(df_base)})\n"
                  "Left: disrupted as overtaken / Right: disrupted as survived",
                  fontsize=13, fontweight="bold", y=1.02)
     plt.tight_layout()

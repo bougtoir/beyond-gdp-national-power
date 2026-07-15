@@ -1,0 +1,141 @@
+url,http_status,final_url,error,checked_at_utc
+http://hdl.handle.net/10068/1007440,500,http://hdl.handle.net/10068/1007440,HTTPError: Internal Server Error,2026-07-15T03:25:43.679467+00:00
+http://history.uaic.ro/wp-content/uploads/2023/08/Rezumat-EN-zavalisca.pdf,200,http://history.uaic.ro/wp-content/uploads/2023/08/Rezumat-EN-zavalisca.pdf,,2026-07-15T03:25:43.682867+00:00
+https://biblio.ugent.be/publication/526116,200,https://biblio.ugent.be/publication/526116,,2026-07-15T03:25:43.683957+00:00
+https://books.google.com/books/about/The_Ming_Maritime_Trade_Policy_in_Transi.html?id=srGEMarSWLYC,200,https://books.google.com/books/about/The_Ming_Maritime_Trade_Policy_in_Transi.html?id=srGEMarSWLYC,,2026-07-15T03:25:43.686756+00:00
+https://books.google.com/books?id=RJ8uGmLb_RcC,200,https://books.google.com/books?id=RJ8uGmLb_RcC,,2026-07-15T03:25:43.688224+00:00
+https://brill.com/view/journals/jaer/24/2-3/article-p160_160.xml,405,https://brill.com/view/journals/jaer/24/2-3/article-p160_160.xml,HTTPError: Not Allowed,2026-07-15T03:25:43.689399+00:00
+https://cup.columbia.edu/book/korea-between-empires-1895-1919/9780231125383/,200,https://cup.columbia.edu/book/korea-between-empires-1895-1919/9780231125383/,,2026-07-15T03:25:43.691115+00:00
+https://doi.org/10.1017/CBO9780511790676.003,200,https://www.cambridge.org/core/books/abs/politics-of-switzerland/neutrality/404ABF58BFCF304C254F215C0E4295CF,,2026-07-15T03:25:43.692327+00:00
+https://doi.org/10.1017/s0008938900011237,200,https://www.cambridge.org/core/journals/central-european-history/article/abs/autarky-ideology-and-technological-lag-the-case-of-the-east-german-chemical-industry-19451964/BC37E6CA67D99CF9F3E70941A1CDCE17,,2026-07-15T03:25:43.856451+00:00
+https://doi.org/10.1017/s002081830002717x,200,https://www.cambridge.org/core/journals/international-organization/article/abs/socialist-patrimonialism-and-the-global-economy-the-case-of-romania/C3265204C4F3FCA7F21977CB39CFDBA8,,2026-07-15T03:25:43.892872+00:00
+https://doi.org/10.1017/s1740022822000262,200,https://www.cambridge.org/core/journals/journal-of-global-history/article/world-in-blocs-leo-amery-the-british-empire-and-regionalist-antiinternationalism-19031947/16BE59E099E28FAE20928F7E74089943,,2026-07-15T03:25:43.964509+00:00
+https://doi.org/10.1080/15564894.2015.1105885,403,https://www.tandfonline.com/doi/full/10.1080/15564894.2015.1105885,HTTPError: Forbidden,2026-07-15T03:25:44.126836+00:00
+https://doi.org/10.1093/acrefore/9780199329175.013.385,403,https://academic.oup.com/edited-volume/61644/chapter/539913835,HTTPError: Forbidden,2026-07-15T03:25:44.313318+00:00
+https://doi.org/10.1111/aspp.70036,403,https://onlinelibrary.wiley.com/doi/10.1111/aspp.70036,HTTPError: Forbidden,2026-07-15T03:25:44.389366+00:00
+https://doi.org/10.1162/jcws_a_00434,403,https://direct.mit.edu/jcws/article/16/1/146-179/13586,HTTPError: Forbidden,2026-07-15T03:25:44.442549+00:00
+https://doi.org/10.1162/jcws_a_01169,403,https://direct.mit.edu/jcws/article/25/4/24/118959/The-Long-Misunderstanding-Cuba-s-Economic-Ties,HTTPError: Forbidden,2026-07-15T03:25:44.480877+00:00
+https://doi.org/10.1163/18747167-bja10001,405,https://brill.com/view/journals/jps/13/1/article-p59_3.xml,HTTPError: Not Allowed,2026-07-15T03:25:44.530015+00:00
+https://doi.org/10.13097/archive-ouverte/unige:166510,200,https://archive-ouverte.unige.ch/unige:166510,,2026-07-15T03:25:44.553773+00:00
+https://doi.org/10.15804/siip201909,,,URLError: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1007)>,2026-07-15T03:25:44.557778+00:00
+https://doi.org/10.16912/tkhr.2016.12.232.147,200,https://www.dbpia.co.kr:443/journal/articleDetail?nodeId=NODE07082030,,2026-07-15T03:25:44.743768+00:00
+https://doi.org/10.21953/lse.00004720,200,https://researchonline.lse.ac.uk/id/eprint/135563/,,2026-07-15T03:25:44.770498+00:00
+https://doi.org/10.2307/1866490,403,https://www.jstor.org/stable/10.2307/1866490?origin=crossref,HTTPError: Forbidden,2026-07-15T03:25:44.923956+00:00
+https://doi.org/10.2307/1898008,403,https://academic.oup.com/jah/article-lookup/doi/10.2307/1898008,HTTPError: Forbidden,2026-07-15T03:25:44.996456+00:00
+https://doi.org/10.23943/princeton/9780691182216.003.0006,200,https://chooser.crossref.org/?doi=10.23943%2Fprinceton%2F9780691182216.003.0006,,2026-07-15T03:25:45.081303+00:00
+https://doi.org/10.3989/aem.1994.v24.977,,,URLError: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1007)>,2026-07-15T03:25:45.087089+00:00
+https://doi.org/10.4324/9781003386063-10,200,https://www.taylorfrancis.com/chapters/oa-edit/10.4324/9781003386063-10/political-regimes-economic-policy-michele-ford-michael-gillan-htwe-htwe-thein,,2026-07-15T03:25:45.091204+00:00
+https://doi.org/10.5771/9783845254227_134,308,https://www.nomos-elibrary.de/index.php?doi=10.5771/9783845254227_134,HTTPError: Permanent Redirect,2026-07-15T03:25:45.143332+00:00
+https://doi.org/10.7868/s3034600225010143,500,https://nniras.ru/s3034600225010143-1/?version_id=107669,HTTPError: Internal Server Error,2026-07-15T03:25:45.165760+00:00
+https://emandulo.apc.uct.ac.za/collection/FHYA%20Depot/Theses%20and%20Dissertations/Hedges_Thesis.pdf,200,https://emandulo.apc.uct.ac.za/collection/FHYA%20Depot/Theses%20and%20Dissertations/Hedges_Thesis.pdf,,2026-07-15T03:25:45.633351+00:00
+https://history.state.gov/historicaldocuments/frus1910/d705,200,https://history.state.gov/historicaldocuments/frus1910/d705,,2026-07-15T03:25:45.697528+00:00
+https://history.state.gov/historicaldocuments/frus1958-60v18/d130,200,https://history.state.gov/historicaldocuments/frus1958-60v18/d130,,2026-07-15T03:25:45.770322+00:00
+https://ideas.repec.org/a/rnp/ecopol/ep1901.html,200,https://ideas.repec.org/a/rnp/ecopol/ep1901.html,,2026-07-15T03:25:45.987179+00:00
+https://kids.britannica.com/scholars/article/Kyivan-Rus/472685,403,https://kids.britannica.com/scholars/article/Kyivan-Rus/472685,HTTPError: Forbidden,2026-07-15T03:25:45.998926+00:00
+https://moodle2.units.it/pluginfile.php/274481/mod_resource/content/1/Schottenhammer_Characteristics_of_Qing_Chinas_Maritime%20Trade%20Politics_2010.pdf,200,https://moodle2.units.it/pluginfile.php/274481/mod_resource/content/1/Schottenhammer_Characteristics_of_Qing_Chinas_Maritime%20Trade%20Politics_2010.pdf,,2026-07-15T03:25:46.003863+00:00
+https://press.princeton.edu/books/hardcover/9780691639963/the-soviet-union-and-the-czechoslovak-army-1948-1983,200,https://press.princeton.edu/books/hardcover/9780691639963/the-soviet-union-and-the-czechoslovak-army-1948-1983,,2026-07-15T03:25:46.043011+00:00
+https://unire.unige.it/handle/123456789/6542,200,https://unire.unige.it/handle/123456789/6542,,2026-07-15T03:25:46.058757+00:00
+https://usvietnam.uoregon.edu/en/united-states-republic-of-vietnam-partnership-reflections-and-contemporary-lessons/,200,https://usvietnam.uoregon.edu/en/united-states-republic-of-vietnam-partnership-reflections-and-contemporary-lessons/,,2026-07-15T03:25:46.094024+00:00
+https://web.archive.org/web/20210225220632/https:/www.britannica.com/topic/Timurid-dynasty,200,https://web.archive.org/web/20210225220632/https:/www.britannica.com/topic/Timurid-dynasty,,2026-07-15T03:25:46.102883+00:00
+https://www.aeaweb.org/articles?id=10.1257%2Faer.20151730,200,https://www.aeaweb.org/articles?id=10.1257%2Faer.20151730,,2026-07-15T03:25:46.204069+00:00
+https://www.asianstudies.org/publications/eaa/archives/japan-and-the-world-1450-1770-was-japan-a-closed-country/,200,https://www.asianstudies.org/publications/eaa/archives/japan-and-the-world-1450-1770-was-japan-a-closed-country/,,2026-07-15T03:25:46.432022+00:00
+https://www.bmlv.gv.at/pdf_pool/publikationen/05_small_states_09.pdf,200,https://www.bmlv.gv.at/pdf_pool/publikationen/05_small_states_09.pdf,,2026-07-15T03:25:46.448684+00:00
+https://www.britannica.com/event/Monroe-Doctrine,403,https://www.britannica.com/event/Monroe-Doctrine,HTTPError: Forbidden,2026-07-15T03:25:46.553559+00:00
+https://www.britannica.com/event/Vietnam-War,403,https://www.britannica.com/event/Vietnam-War,HTTPError: Forbidden,2026-07-15T03:25:46.606223+00:00
+https://www.britannica.com/facts/Tokugawa-period,403,https://www.britannica.com/facts/Tokugawa-period,HTTPError: Forbidden,2026-07-15T03:25:46.635768+00:00
+https://www.britannica.com/place/Athens/History,403,https://www.britannica.com/place/Athens/History,HTTPError: Forbidden,2026-07-15T03:25:46.669264+00:00
+https://www.britannica.com/place/Austria-Hungary,403,https://www.britannica.com/place/Austria-Hungary,HTTPError: Forbidden,2026-07-15T03:25:46.689381+00:00
+https://www.britannica.com/place/British-Empire,403,https://www.britannica.com/place/British-Empire,HTTPError: Forbidden,2026-07-15T03:25:46.690971+00:00
+https://www.britannica.com/place/Caliphate/The-Abbasid-caliphate,403,https://www.britannica.com/place/Caliphate/The-Abbasid-caliphate,HTTPError: Forbidden,2026-07-15T03:25:46.702779+00:00
+https://www.britannica.com/place/Carthage-ancient-city-Tunisia,403,https://www.britannica.com/place/Carthage-ancient-city-Tunisia,HTTPError: Forbidden,2026-07-15T03:25:46.725740+00:00
+https://www.britannica.com/place/China/History,403,https://www.britannica.com/place/China/History,HTTPError: Forbidden,2026-07-15T03:25:46.726679+00:00
+https://www.britannica.com/place/China/The-Yuan-or-Mongol-dynasty,403,https://www.britannica.com/place/China/The-Yuan-or-Mongol-dynasty,HTTPError: Forbidden,2026-07-15T03:25:46.734679+00:00
+https://www.britannica.com/place/Cuba,403,https://www.britannica.com/place/Cuba,HTTPError: Forbidden,2026-07-15T03:25:46.756242+00:00
+https://www.britannica.com/place/Czechoslovakia,403,https://www.britannica.com/place/Czechoslovakia,HTTPError: Forbidden,2026-07-15T03:25:46.760708+00:00
+https://www.britannica.com/place/Denmark,403,https://www.britannica.com/place/Denmark,HTTPError: Forbidden,2026-07-15T03:25:46.764326+00:00
+https://www.britannica.com/place/Dutch-Republic,403,https://www.britannica.com/place/Dutch-Republic,HTTPError: Forbidden,2026-07-15T03:25:46.785632+00:00
+https://www.britannica.com/place/East-Germany,403,https://www.britannica.com/place/East-Germany,HTTPError: Forbidden,2026-07-15T03:25:46.787121+00:00
+https://www.britannica.com/place/Empire-of-Japan,403,https://www.britannica.com/place/Empire-of-Japan,HTTPError: Forbidden,2026-07-15T03:25:46.791940+00:00
+https://www.britannica.com/place/First-French-Empire,403,https://www.britannica.com/place/First-French-Empire,HTTPError: Forbidden,2026-07-15T03:25:46.800661+00:00
+https://www.britannica.com/place/Germany/The-Third-Reich-1933-45,403,https://www.britannica.com/place/Germany/The-Third-Reich-1933-45,HTTPError: Forbidden,2026-07-15T03:25:46.821006+00:00
+https://www.britannica.com/place/Hawaii-state/History,403,https://www.britannica.com/place/Hawaii-state/History,HTTPError: Forbidden,2026-07-15T03:25:46.822477+00:00
+https://www.britannica.com/place/India/The-Mughal-Empire-1526-1761,403,https://www.britannica.com/place/India/The-Mughal-Empire-1526-1761,HTTPError: Forbidden,2026-07-15T03:25:46.836745+00:00
+https://www.britannica.com/place/Iran,403,https://www.britannica.com/place/Iran,HTTPError: Forbidden,2026-07-15T03:25:46.837768+00:00
+https://www.britannica.com/place/Israel,403,https://www.britannica.com/place/Israel,HTTPError: Forbidden,2026-07-15T03:25:46.848815+00:00
+https://www.britannica.com/place/Japan,403,https://www.britannica.com/place/Japan,HTTPError: Forbidden,2026-07-15T03:25:46.858156+00:00
+https://www.britannica.com/place/Japan/Japan-since-1945,403,https://www.britannica.com/place/Japan/Japan-since-1945,HTTPError: Forbidden,2026-07-15T03:25:46.859111+00:00
+https://www.britannica.com/place/Majapahit-empire,403,https://www.britannica.com/place/Majapahit-empire,HTTPError: Forbidden,2026-07-15T03:25:46.877521+00:00
+https://www.britannica.com/place/Mali-historical-empire-Africa,403,https://www.britannica.com/place/Mali-historical-empire-Africa,HTTPError: Forbidden,2026-07-15T03:25:46.879441+00:00
+https://www.britannica.com/place/Manchukuo,403,https://www.britannica.com/place/Manchukuo,HTTPError: Forbidden,2026-07-15T03:25:46.887788+00:00
+https://www.britannica.com/place/Mongol-empire,403,https://www.britannica.com/place/Mongol-empire,HTTPError: Forbidden,2026-07-15T03:25:46.904318+00:00
+https://www.britannica.com/place/North-Korea,403,https://www.britannica.com/place/North-Korea,HTTPError: Forbidden,2026-07-15T03:25:46.909832+00:00
+https://www.britannica.com/place/Parthia,403,https://www.britannica.com/place/Parthia,HTTPError: Forbidden,2026-07-15T03:25:46.916375+00:00
+https://www.britannica.com/place/Portugal/Overseas-empire,403,https://www.britannica.com/place/Portugal/Overseas-empire,HTTPError: Forbidden,2026-07-15T03:25:46.918441+00:00
+https://www.britannica.com/place/Roman-Empire,403,https://www.britannica.com/place/Roman-Empire,HTTPError: Forbidden,2026-07-15T03:25:46.922143+00:00
+https://www.britannica.com/place/Roman-Republic,403,https://www.britannica.com/place/Roman-Republic,HTTPError: Forbidden,2026-07-15T03:25:46.948161+00:00
+https://www.britannica.com/place/Romania/Communist-Romania,403,https://www.britannica.com/place/Romania/Communist-Romania,HTTPError: Forbidden,2026-07-15T03:25:46.958040+00:00
+https://www.britannica.com/place/Russia,403,https://www.britannica.com/place/Russia,HTTPError: Forbidden,2026-07-15T03:25:46.960136+00:00
+https://www.britannica.com/place/Russian-Empire,403,https://www.britannica.com/place/Russian-Empire,HTTPError: Forbidden,2026-07-15T03:25:46.961851+00:00
+https://www.britannica.com/place/Ryukyu-Islands,403,https://www.britannica.com/place/Ryukyu-Islands,HTTPError: Forbidden,2026-07-15T03:25:46.968795+00:00
+https://www.britannica.com/place/Seleucid-Empire,403,https://www.britannica.com/place/Seleucid-Empire,HTTPError: Forbidden,2026-07-15T03:25:46.981832+00:00
+https://www.britannica.com/place/Singapore,403,https://www.britannica.com/place/Singapore,HTTPError: Forbidden,2026-07-15T03:25:46.995556+00:00
+https://www.britannica.com/place/South-Korea,403,https://www.britannica.com/place/South-Korea,HTTPError: Forbidden,2026-07-15T03:25:46.998738+00:00
+https://www.britannica.com/place/Soviet-Union,403,https://www.britannica.com/place/Soviet-Union,HTTPError: Forbidden,2026-07-15T03:25:47.000950+00:00
+https://www.britannica.com/place/Sparta,403,https://www.britannica.com/place/Sparta,HTTPError: Forbidden,2026-07-15T03:25:47.005085+00:00
+https://www.britannica.com/place/Srivijaya-empire,403,https://www.britannica.com/place/Srivijaya-empire,HTTPError: Forbidden,2026-07-15T03:25:47.014991+00:00
+https://www.britannica.com/place/Switzerland,403,https://www.britannica.com/place/Switzerland,HTTPError: Forbidden,2026-07-15T03:25:47.029498+00:00
+https://www.britannica.com/place/Taiwan,403,https://www.britannica.com/place/Taiwan,HTTPError: Forbidden,2026-07-15T03:25:47.037817+00:00
+https://www.britannica.com/place/Turkmenistan,403,https://www.britannica.com/place/Turkmenistan,HTTPError: Forbidden,2026-07-15T03:25:47.044178+00:00
+https://www.britannica.com/place/United-Arab-Emirates,403,https://www.britannica.com/place/United-Arab-Emirates,HTTPError: Forbidden,2026-07-15T03:25:47.053608+00:00
+https://www.britannica.com/place/Yugoslavia-historical-nation-Europe-1929-1992,403,https://www.britannica.com/place/Yugoslavia-historical-nation-Europe-1929-1992,HTTPError: Forbidden,2026-07-15T03:25:47.054437+00:00
+https://www.britannica.com/place/ancient-Egypt/Government-and-conditions-under-the-Ptolemies,403,https://www.britannica.com/place/ancient-Egypt/Government-and-conditions-under-the-Ptolemies,HTTPError: Forbidden,2026-07-15T03:25:47.064627+00:00
+https://www.britannica.com/place/ancient-Iran,403,https://www.britannica.com/place/ancient-Iran,HTTPError: Forbidden,2026-07-15T03:25:47.068875+00:00
+https://www.britannica.com/question/Who-were-the-Umayyads,403,https://www.britannica.com/question/Who-were-the-Umayyads,HTTPError: Forbidden,2026-07-15T03:25:47.084897+00:00
+https://www.britannica.com/summary/Cold-War,403,https://www.britannica.com/summary/Cold-War,HTTPError: Forbidden,2026-07-15T03:25:47.087147+00:00
+https://www.britannica.com/summary/Mamluk-soldier,403,https://www.britannica.com/summary/Mamluk-soldier,HTTPError: Forbidden,2026-07-15T03:25:47.090203+00:00
+https://www.britannica.com/summary/Ottoman-Empire,403,https://www.britannica.com/summary/Ottoman-Empire,HTTPError: Forbidden,2026-07-15T03:25:47.097162+00:00
+https://www.britannica.com/topic/Alaungpaya-Dynasty,403,https://www.britannica.com/topic/Alaungpaya-Dynasty,HTTPError: Forbidden,2026-07-15T03:25:47.102058+00:00
+https://www.britannica.com/topic/Antigonid-dynasty,403,https://www.britannica.com/topic/Antigonid-dynasty,HTTPError: Forbidden,2026-07-15T03:25:47.109648+00:00
+https://www.britannica.com/topic/Aztec,403,https://www.britannica.com/topic/Aztec,HTTPError: Forbidden,2026-07-15T03:25:47.117740+00:00
+https://www.britannica.com/topic/Byzantine-History,403,https://www.britannica.com/topic/Byzantine-History,HTTPError: Forbidden,2026-07-15T03:25:47.119349+00:00
+https://www.britannica.com/topic/Commonwealth-Polish-history,403,https://www.britannica.com/topic/Commonwealth-Polish-history,HTTPError: Forbidden,2026-07-15T03:25:47.135003+00:00
+https://www.britannica.com/topic/Goryeo-dynasty,403,https://www.britannica.com/topic/Goryeo-dynasty,HTTPError: Forbidden,2026-07-15T03:25:47.139821+00:00
+https://www.britannica.com/topic/Gupta-dynasty,403,https://www.britannica.com/topic/Gupta-dynasty,HTTPError: Forbidden,2026-07-15T03:25:47.141104+00:00
+https://www.britannica.com/topic/Han-dynasty,403,https://www.britannica.com/topic/Han-dynasty,HTTPError: Forbidden,2026-07-15T03:25:47.143760+00:00
+https://www.britannica.com/topic/Hanseatic-League,403,https://www.britannica.com/topic/Hanseatic-League,HTTPError: Forbidden,2026-07-15T03:25:47.145098+00:00
+https://www.britannica.com/topic/Imperial-Economic-Conference,403,https://www.britannica.com/topic/Imperial-Economic-Conference,HTTPError: Forbidden,2026-07-15T03:25:47.157286+00:00
+https://www.britannica.com/topic/Inca,403,https://www.britannica.com/topic/Inca,HTTPError: Forbidden,2026-07-15T03:25:47.161796+00:00
+https://www.britannica.com/topic/Italian-kingdom,403,https://www.britannica.com/topic/Italian-kingdom,HTTPError: Forbidden,2026-07-15T03:25:47.165989+00:00
+https://www.britannica.com/topic/Joseon-dynasty,403,https://www.britannica.com/topic/Joseon-dynasty,HTTPError: Forbidden,2026-07-15T03:25:47.181753+00:00
+https://www.britannica.com/topic/Khmer-Empire,403,https://www.britannica.com/topic/Khmer-Empire,HTTPError: Forbidden,2026-07-15T03:25:47.182406+00:00
+https://www.britannica.com/topic/Kushan,403,https://www.britannica.com/topic/Kushan,HTTPError: Forbidden,2026-07-15T03:25:47.185755+00:00
+https://www.britannica.com/topic/Northern-Song-dynasty,403,https://www.britannica.com/topic/Northern-Song-dynasty,HTTPError: Forbidden,2026-07-15T03:25:47.189194+00:00
+https://www.britannica.com/topic/Qing-dynasty,403,https://www.britannica.com/topic/Qing-dynasty,HTTPError: Forbidden,2026-07-15T03:25:47.190799+00:00
+https://www.britannica.com/topic/Safavid-dynasty,403,https://www.britannica.com/topic/Safavid-dynasty,HTTPError: Forbidden,2026-07-15T03:25:47.192249+00:00
+https://www.britannica.com/topic/Sasanian-dynasty,403,https://www.britannica.com/topic/Sasanian-dynasty,HTTPError: Forbidden,2026-07-15T03:25:47.205840+00:00
+https://www.britannica.com/topic/Tang-dynasty,403,https://www.britannica.com/topic/Tang-dynasty,HTTPError: Forbidden,2026-07-15T03:25:47.219313+00:00
+https://www.britannica.com/topic/Venetian-Republic,403,https://www.britannica.com/topic/Venetian-Republic,HTTPError: Forbidden,2026-07-15T03:25:47.221744+00:00
+https://www.britannica.com/topic/Western-colonialism/Decline-of-the-Spanish-and-Portuguese-empires,403,https://www.britannica.com/topic/Western-colonialism/Decline-of-the-Spanish-and-Portuguese-empires,HTTPError: Forbidden,2026-07-15T03:25:47.226174+00:00
+https://www.britannica.com/topic/Zulu,403,https://www.britannica.com/topic/Zulu,HTTPError: Forbidden,2026-07-15T03:25:47.233768+00:00
+https://www.britannica.com/topic/economy-of-India,403,https://www.britannica.com/topic/economy-of-India,HTTPError: Forbidden,2026-07-15T03:25:47.248530+00:00
+https://www.britannica.com/topic/history-of-Belgium,403,https://www.britannica.com/topic/history-of-Belgium,HTTPError: Forbidden,2026-07-15T03:25:47.250107+00:00
+https://www.britannica.com/topic/history-of-China/The-Ming-dynasty,403,https://www.britannica.com/topic/history-of-China/The-Ming-dynasty,HTTPError: Forbidden,2026-07-15T03:25:47.253648+00:00
+https://www.britannica.com/topic/history-of-Ethiopia,403,https://www.britannica.com/topic/history-of-Ethiopia,HTTPError: Forbidden,2026-07-15T03:25:47.254842+00:00
+https://www.britannica.com/topic/history-of-Myanmar,403,https://www.britannica.com/topic/history-of-Myanmar,HTTPError: Forbidden,2026-07-15T03:25:47.256588+00:00
+https://www.britannica.com/topic/history-of-Sweden,403,https://www.britannica.com/topic/history-of-Sweden,HTTPError: Forbidden,2026-07-15T03:25:47.265984+00:00
+https://www.britannica.com/topic/history-of-Thailand,403,https://www.britannica.com/topic/history-of-Thailand,HTTPError: Forbidden,2026-07-15T03:25:47.272176+00:00
+https://www.cambridge.org/core/books/evolution-of-the-south-koreaunited-states-alliance/D17534CD0983140F3BDE9D129543EB5F,200,https://www.cambridge.org/core/books/evolution-of-the-south-koreaunited-states-alliance/D17534CD0983140F3BDE9D129543EB5F,,2026-07-15T03:25:47.273832+00:00
+https://www.cambridge.org/core/books/poland-under-communism/AB4118A491B528BD2811173EB0B1FE91,200,https://www.cambridge.org/core/books/poland-under-communism/AB4118A491B528BD2811173EB0B1FE91,,2026-07-15T03:25:47.297597+00:00
+https://www.cambridge.org/core/journals/international-journal-of-middle-east-studies/article/abs/international-and-domestic-maritime-trade-in-the-ottoman-empire-during-the-18th-century/969BB1866B6A501B7F4BCB43D8A45BD6,200,https://www.cambridge.org/core/journals/international-journal-of-middle-east-studies/article/abs/international-and-domestic-maritime-trade-in-the-ottoman-empire-during-the-18th-century/969BB1866B6A501B7F4BCB43D8A45BD6,,2026-07-15T03:25:47.305100+00:00
+https://www.cambridge.org/core/journals/journal-of-east-asian-studies/article/alliance-treaty-as-wedge-strategy-the-origin-of-the-chinanorth-korea-1961-treaty-of-friendship-cooperation-and-mutual-assistance/AFC5EDE1FEBD8EF5C3BB4EEC0C391E11,200,https://www.cambridge.org/core/journals/journal-of-east-asian-studies/article/alliance-treaty-as-wedge-strategy-the-origin-of-the-chinanorth-korea-1961-treaty-of-friendship-cooperation-and-mutual-assistance/AFC5EDE1FEBD8EF5C3BB4EEC0C391E11,,2026-07-15T03:25:47.308543+00:00
+https://www.cambridge.org/core/journals/journal-of-roman-archaeology/article/abs/shipwreck-cargoes-in-the-western-mediterranean-and-the-organization-of-roman-maritime-trade/E78D93DFACB38EBC2C07FB48037D3A96,200,https://www.cambridge.org/core/journals/journal-of-roman-archaeology/article/abs/shipwreck-cargoes-in-the-western-mediterranean-and-the-organization-of-roman-maritime-trade/E78D93DFACB38EBC2C07FB48037D3A96,,2026-07-15T03:25:47.310204+00:00
+https://www.cambridge.org/core/journals/latin-american-antiquity/article/aztec-and-tlaxcalan-economic-interaction-blockade-or-interregional-exchange/CBE14EE68216FC6CA5BC5C8F2A1BD3C3,200,https://www.cambridge.org/core/journals/latin-american-antiquity/article/aztec-and-tlaxcalan-economic-interaction-blockade-or-interregional-exchange/CBE14EE68216FC6CA5BC5C8F2A1BD3C3,,2026-07-15T03:25:47.318055+00:00
+https://www.cambridge.org/core/journals/slavic-review/article/abs/military-factor-in-east-german-soviet-policy/2BE61BA3E73252130DEA7D3EB264CE42,200,https://www.cambridge.org/core/journals/slavic-review/article/abs/military-factor-in-east-german-soviet-policy/2BE61BA3E73252130DEA7D3EB264CE42,,2026-07-15T03:25:47.321140+00:00
+https://www.congress.gov/crs-product/IF12503,403,https://www.congress.gov/crs-product/IF12503,HTTPError: Forbidden,2026-07-15T03:25:47.336501+00:00
+https://www.degruyterbrill.com/document/doi/10.1515/9781400844371-007/html,202,https://www.degruyterbrill.com/document/doi/10.1515/9781400844371-007/html,,2026-07-15T03:25:47.389181+00:00
+https://www.govinfo.gov/content/pkg/PPP-1998-book1/html/PPP-1998-book1-doc-pg742.htm,200,https://www.govinfo.gov/content/pkg/PPP-1998-book1/html/PPP-1998-book1-doc-pg742.htm,,2026-07-15T03:25:47.471799+00:00
+https://www.nids.mod.go.jp/english/event/forum/pdf/2016/06.pdf,200,https://www.nids.mod.go.jp/english/event/forum/pdf/2016/06.pdf,,2026-07-15T03:25:47.592374+00:00
+https://www.pennpress.org/9780812239126/manchuria-under-japanese-dominion/,403,https://www.pennpress.org/9780812239126/manchuria-under-japanese-dominion/,HTTPError: Forbidden,2026-07-15T03:25:47.651264+00:00
+https://www.persee.fr/doc/cea_0008-0055_1974_num_14_55_2633,200,https://www.persee.fr/doc/cea_0008-0055_1974_num_14_55_2633,,2026-07-15T03:25:47.696021+00:00
+https://www.press.umich.edu/pdf/047209906X-ch3.pdf,200,https://www.press.umich.edu/pdf/047209906X-ch3.pdf,,2026-07-15T03:25:47.713496+00:00
+https://www.research.unipd.it/handle/11577/3412606,200,https://www.research.unipd.it/handle/11577/3412606,,2026-07-15T03:25:47.881636+00:00

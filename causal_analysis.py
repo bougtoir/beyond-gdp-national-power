@@ -1,5 +1,5 @@
 """
-Causal Identification Strengthening for Network Exclusion and State Collapse
+Exploratory identification diagnostics for network exclusion and state collapse
 
 Implements four complementary strategies to move beyond correlational evidence:
   A. Instrumental Variables (2SLS) — geo_barrier as instrument for closure
@@ -7,7 +7,8 @@ Implements four complementary strategies to move beyond correlational evidence:
   C. Natural Experiment framing — technical network exclusion as quasi-exogenous
   D. Robustness battery — E-values, permutation tests, leave-one-out, placebo
 
-All results are saved to reports/ as text and returned as a dict for LaTeX integration.
+These diagnostics do not establish causal identification. Results are saved to
+reports/ and returned as a dict for reproducible inspection.
 """
 
 import warnings
@@ -356,8 +357,8 @@ def natural_experiment_analysis(df):
     assignment allows a difference-based estimate.
 
     We compare:
-      - Treatment: polities reclassified as technical_network_exclusion (n=7)
-      - Control: polities with closure_type == 'none' (open, n=60)
+      - Treatment: polities reclassified as technical_network_exclusion
+      - Control: polities with closure_type == 'none' (open)
       - Additional comparison: policy-closed (maritime_ban + sakoku + bloc)
     """
     print("\n" + "=" * 70)
@@ -367,7 +368,7 @@ def natural_experiment_analysis(df):
 
     results = {}
 
-    # Apply 7-country reclassification
+    # Apply the complete candidate reclassification
     from sensitivity_technical_network_exclusion import (
         STRONG_CANDIDATES, MODERATE_CANDIDATES,
         apply_technical_network_exclusion,
@@ -725,12 +726,25 @@ def _wilson_ci(x, n, alpha=0.05):
 
 def run_all():
     df = load_data()
+    print(
+        "INTERPRETATION: exploratory diagnostics only; the AI-assisted dataset, "
+        "sample construction, and instruments do not support causal identification."
+    )
     print(f"Data loaded: N = {len(df)}")
     print(f"Closure: {(df['closure_type'] != 'none').sum()} closed, "
           f"{(df['closure_type'] == 'none').sum()} open")
     print()
 
-    all_results = {}
+    all_results = {
+        "_interpretation": {
+            "status": "exploratory_diagnostics_only",
+            "causal_identification_established": False,
+            "note": (
+                "The AI-assisted coding, non-probability sample, and proposed instruments "
+                "do not identify causal effects."
+            ),
+        }
+    }
 
     # A. IV
     all_results["iv_2sls"] = iv_2sls_analysis(df)

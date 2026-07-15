@@ -4,8 +4,8 @@
 2つの感度軸:
   軸1 — closure_type 再分類（技術的海禁）
     A) ベースライン（変更なし）
-    B) 強い候補のみ再分類（5国）
-    C) 全候補再分類（7国）
+    B) 強い候補のみ再分類
+    C) 全候補再分類
 
   軸2 — disrupted 18国の帰属
     overtaken扱い: disrupted → overtaken（体制崩壊＝征服と見なす）
@@ -247,12 +247,12 @@ def run_sensitivity():
             "reclassified": [],
         },
         "strong": {
-            "label": "+5国再分類",
+            "label": f"+{len(STRONG_CANDIDATES)}国再分類",
             "df": apply_technical_network_exclusion(df_base, STRONG_CANDIDATES),
             "reclassified": STRONG_CANDIDATES,
         },
         "all": {
-            "label": "+7国再分類",
+            "label": f"+{len(STRONG_CANDIDATES + MODERATE_CANDIDATES)}国再分類",
             "df": apply_technical_network_exclusion(
                 df_base, STRONG_CANDIDATES + MODERATE_CANDIDATES
             ),
@@ -279,7 +279,11 @@ def run_sensitivity():
     print(f"\n  データ: N={len(df_base)}")
     print(f"  outcome 3カテゴリ: overtaken={n_conquered}, disrupted={n_disrupted}, survived={n_survived}")
     print(f"\n  感度分析軸:")
-    print(f"    軸1 — closure_type再分類: ベースライン / +5国 / +7国")
+    print(
+        "    軸1 — closure_type再分類: ベースライン / "
+        f"+{len(STRONG_CANDIDATES)}国 / "
+        f"+{len(STRONG_CANDIDATES + MODERATE_CANDIDATES)}国"
+    )
     print(f"    軸2 — disrupted帰属: 征服扱い(overtaken+disrupted vs survived)")
     print(f"                          存続扱い(overtaken vs disrupted+survived)")
     print(f"    → 合計 3×2 = 6 シナリオ")
@@ -610,7 +614,11 @@ def run_sensitivity():
         or_s = all_cm[f"{d_mode}__strong"]["OR"]
         or_a = all_cm[f"{d_mode}__all"]["OR"]
         print(f"     {d_label}:")
-        print(f"       ベースライン OR={or_b:.3f} → +5国 OR={or_s:.3f} → +7国 OR={or_a:.3f}")
+        print(
+            f"       ベースライン OR={or_b:.3f} → "
+            f"+{len(STRONG_CANDIDATES)}国 OR={or_s:.3f} → "
+            f"+{len(STRONG_CANDIDATES + MODERATE_CANDIDATES)}国 OR={or_a:.3f}"
+        )
 
     print(f"""
   3. 【三カテゴリ outcome の含意】

@@ -1,0 +1,17 @@
+field,role,current_origin,public_data_derived,record_level_source,coding_rule,independent_validation,planned_treatment
+entity,historical identifier,Devin-selected polity-period sample,no,not present,not applicable,none,retain and add public historical source
+period,historical factual claim,Devin-coded date range,no,not present,not applicable,none,retain provisionally and verify against public historical source
+era,derived historical category,Devin-coded from period,no,not present,implicit category labels,none,derive mechanically from verified period
+region,geographic category,Devin-coded,no,not present,not documented,none,retain provisionally and document geographic rule
+dominant,subjective classification,AI-assisted exploratory coding,no,not present,not documented,none,retain as subjective_ai_assisted_legacy and permit replacement
+stock_index,subjective score,AI-assisted exploratory coding,no,not present,not documented,none,retain as subjective_ai_assisted_legacy and permit replacement
+trade_openness,subjective score,AI-assisted exploratory coding,no,not present,not documented,none,retain as subjective_ai_assisted_legacy and permit replacement
+closure_type,historical classification,AI-assisted classification informed by general historical knowledge,no,not present,not documented,none,retain provisionally and add source plus rule
+outcome,historical classification,AI-assisted classification informed by general historical knowledge,no,not present,rule changed across later branches,none,retain branch lineage and add source plus rule
+geo_barrier,subjective score,AI-assisted exploratory coding,no,not present,not documented,none,retain as subjective_ai_assisted_legacy and permit replacement
+external_threat,subjective score,AI-assisted exploratory coding,no,not present,not documented,none,retain as subjective_ai_assisted_legacy and permit replacement
+relative_pop,subjective score,AI-assisted exploratory coding,no,not present,not documented,none,retain as subjective_ai_assisted_legacy and permit replacement
+tech_position,subjective score,AI-assisted exploratory coding,no,not present,not documented,none,retain as subjective_ai_assisted_legacy and permit replacement
+institutional_quality,subjective score,AI-assisted exploratory coding,no,not present,not documented,none,retain as subjective_ai_assisted_legacy and permit replacement
+regime_duration_yrs,derived duration,Devin-calculated from period in 79 of 96 parseable records,no,not present,period subtraction,none,recalculate mechanically from verified dates
+has_external_patron,historical classification,AI-assisted classification informed by general historical knowledge,no,not present,not documented,none,retain provisionally and add source plus rule

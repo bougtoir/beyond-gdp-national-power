@@ -1,0 +1,10 @@
+session_id,title,role,pull_requests,key_data_change
+b8007b0c27d44f7a961387806de03a3a,Beyond GDP 国力ブレスト,original concept and dataset generation,"73","created 54 records, then added 42 records to reach N=96"
+7561c13286574d1f9bf2c45150dda3ce,技術的海禁政策 感度分析,technical-exclusion sensitivity and outcome review,"75;76","defined five strong and two moderate technical-exclusion candidates; created three-category outcomes; later changed two borderline outcomes on a branch"
+51ff1c12c8484a1bbe7d31db48f5a3c3,海禁政策と興亡,first manuscript and submission package,"77;90;91","no new record-level covariates; converted analysis into manuscript and submission files"
+126d94ab534a4b1ea112a2dae8779232,海禁政策と興亡2nd,causal-identification extension,"143","added IV, PSM, natural-experiment framing, and robustness analyses using the existing coded dataset"
+289b1d0597c34cdd8a0d443bcb122c7c,海禁政策と興亡3rd,journal retargeting and public-repository synchronization,"144;145;146;148","no new record-level covariates; revised manuscript, outputs, and sync configuration"
+99eba1fc4d74423d83c3ea40d65f02e6,海禁政策E&P,Economics & Politics retargeting and later figure fixes,"151;152;153;154","no new record-level covariates; strengthened causal and political-economy interpretation"
+0e7f4678847149b1abf7e4a4bb8d5134,海禁政策pc,Public Choice retargeting,"155","no new record-level covariates; changed journal framing and references"
+0c06143b2bf94e6d9688e47f081fa7dc,海禁政策と興亡,parallel audit attempt during July review,"","did not inspect this project after initially selecting an unrelated repository"
+0ba1789895e54a71a2748341cd59becd,解禁政策確認,current provenance and reproducibility audit,"","reconstructing session, commit, branch, and public-repository lineage"

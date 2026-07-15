@@ -1,9 +1,14 @@
 {
+  "_interpretation": {
+    "status": "exploratory_diagnostics_only",
+    "causal_identification_established": false,
+    "note": "The AI-assisted coding, non-probability sample, and proposed instruments do not identify causal effects."
+  },
   "iv_2sls": {
     "first_stage": {
       "coef_geo": 0.19221554602078136,
       "t_geo": 0.7628401606946231,
-      "p_geo": 0.44755357842317056,
+      "p_geo": 0.4475535784231707,
       "R2": 0.3660704009121579,
       "F": 10.394320167255328,
       "partial_F_geo": 0.5819251107685984,
@@ -11,11 +16,11 @@
     },
     "reduced_form": {
       "coef_geo": -0.15125184682566398,
-      "p_geo": 0.43915493971331965
+      "p_geo": 0.43915493971332
     },
     "second_stage_manual": {
       "coef_closure": -0.7868866486444948,
-      "p_closure": 0.4391549397133187,
+      "p_closure": 0.43915493971331887,
       "R2": 0.6010342980635226
     },
     "iv2sls_linearmodels": {
@@ -36,7 +41,7 @@
       "open_mean": 0.2414948726688398,
       "closed_mean": 0.5975425688172163,
       "overlap_region": [
-        0.12131560111464015,
+        0.12131560111464021,
         0.859465602327805
       ]
     },
@@ -44,7 +49,7 @@
       "n_treated": 36,
       "n_matched": 34,
       "n_unmatched": 2,
-      "caliper": 0.31391171246423166
+      "caliper": 0.31391171246423155
     },
     "att": {
       "estimate": -0.11764705882352933,

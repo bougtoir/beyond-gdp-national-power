@@ -1,5 +1,5 @@
 """
-Generate Cliometrica manuscript in LaTeX (Springer Nature sn-jnl template).
+Generate reproducible LaTeX manuscript sources and submission materials.
 
 Outputs (in manuscript/):
   manuscript.tex       — Main manuscript (LaTeX source)
@@ -23,6 +23,8 @@ warnings.filterwarnings("ignore")
 import numpy as np
 import pandas as pd
 import scipy.stats as stats
+from docx import Document
+from docx.shared import Cm, Pt
 
 # reuse everything from the docx script
 sys.path.insert(0, os.path.dirname(__file__))
@@ -70,6 +72,12 @@ def _pct(value):
 def _compile_latex(tex_path, out_dir):
     """Compile a .tex file to PDF using pdflatex + bibtex."""
     basename = os.path.splitext(os.path.basename(tex_path))[0]
+    pdf = os.path.join(out_dir, basename + ".pdf")
+    if shutil.which("pdflatex") is None:
+        if os.path.exists(pdf):
+            os.remove(pdf)
+        return None
+
     cmd_latex = [
         "pdflatex", "-interaction=nonstopmode",
         "-output-directory", out_dir, tex_path
@@ -87,7 +95,11 @@ def _compile_latex(tex_path, out_dir):
 
     # bibtex (resolves citations from .bib file)
     bib_path = os.path.join(out_dir, "references.bib")
-    if os.path.exists(bib_path) and os.path.exists(aux_path):
+    if (
+        shutil.which("bibtex") is not None
+        and os.path.exists(bib_path)
+        and os.path.exists(aux_path)
+    ):
         cmd_bibtex = ["bibtex", basename]
         subprocess.run(cmd_bibtex, capture_output=True, timeout=60,
                        cwd=out_dir)
@@ -96,7 +108,6 @@ def _compile_latex(tex_path, out_dir):
     subprocess.run(cmd_latex, capture_output=True, timeout=120)
     subprocess.run(cmd_latex, capture_output=True, timeout=120)
 
-    pdf = os.path.join(out_dir, basename + ".pdf")
     return pdf if os.path.exists(pdf) else None
 
 
@@ -115,18 +126,6 @@ def create_bibtex():
   doi       = {10.1162/003355302320935025}
 }
 
-@incollection{AcemogluJohnsonRobinson2005,
-  author    = {Acemoglu, Daron and Johnson, Simon and Robinson, James A.},
-  title     = {Institutions as a Fundamental Cause of Long-Run Growth},
-  booktitle = {Handbook of Economic Growth},
-  editor    = {Aghion, Philippe and Durlauf, Steven N.},
-  volume    = {1A},
-  publisher = {Elsevier},
-  address   = {Amsterdam},
-  pages     = {385--472},
-  year      = {2005}
-}
-
 @book{AcemogluRobinson2012,
   author    = {Acemoglu, Daron and Robinson, James A.},
   title     = {Why Nations Fail: The Origins of Power, Prosperity, and Poverty},
@@ -143,24 +142,6 @@ def create_bibtex():
   pages     = {2188--2244},
   year      = {2020},
   doi       = {10.1086/705716}
-}
-
-@book{Arrighi1994,
-  author    = {Arrighi, Giovanni},
-  title     = {The Long Twentieth Century: Money, Power, and the Origins of Our Times},
-  publisher = {Verso},
-  address   = {London},
-  year      = {1994}
-}
-
-@article{BroadberryGuan2026,
-  author    = {Broadberry, Stephen N. and Guan, Hanhui},
-  title     = {Regional Variation of {GDP} per Head within {China}, 1080--1850},
-  journal   = {Explorations in Economic History},
-  volume    = {95},
-  pages     = {101567},
-  year      = {2026},
-  doi       = {10.1016/j.eeh.2025.101567}
 }
 
 @article{CominEasterlyGong2010,
@@ -183,16 +164,6 @@ def create_bibtex():
   pages     = {137--178},
   year      = {2018},
   doi       = {10.1257/mac.20150175}
-}
-
-@article{DeVries2010,
-  author    = {De Vries, Jan},
-  title     = {The Limits of Globalization in the Early Modern World},
-  journal   = {Economic History Review},
-  volume    = {63},
-  pages     = {710--733},
-  year      = {2010},
-  doi       = {10.1111/j.1468-0289.2009.00497.x}
 }
 
 @book{Diamond1997,
@@ -229,28 +200,12 @@ def create_bibtex():
   year      = {1987}
 }
 
-@book{Maddison2007,
-  author    = {Maddison, Angus},
-  title     = {Contours of the World Economy 1--2030 {AD}: Essays in Macro-Economic History},
-  publisher = {Oxford University Press},
-  address   = {Oxford},
-  year      = {2007}
-}
-
 @book{Mokyr2002,
   author    = {Mokyr, Joel},
   title     = {The Gifts of Athena: Historical Origins of the Knowledge Economy},
   publisher = {Princeton University Press},
   address   = {Princeton},
   year      = {2002}
-}
-
-@book{NorthWallisWeingast2009,
-  author    = {North, Douglass C. and Wallis, John Joseph and Weingast, Barry R.},
-  title     = {Violence and Social Orders: A Conceptual Framework for Interpreting Recorded Human History},
-  publisher = {Cambridge University Press},
-  address   = {Cambridge},
-  year      = {2009}
 }
 
 @article{Nunn2008,
@@ -277,24 +232,6 @@ def create_bibtex():
   publisher = {Cambridge University Press},
   address   = {Cambridge},
   year      = {1988}
-}
-
-@article{Turchin2009,
-  author    = {Turchin, Peter},
-  title     = {A Theory for Formation of Large Empires},
-  journal   = {Journal of Global History},
-  volume    = {4},
-  pages     = {191--217},
-  year      = {2009},
-  doi       = {10.1017/S1740022809003192}
-}
-
-@book{TurchinNefedov2009,
-  author    = {Turchin, Peter and Nefedov, Sergey A.},
-  title     = {Secular Cycles},
-  publisher = {Princeton University Press},
-  address   = {Princeton},
-  year      = {2009}
 }
 """
     bib_path = os.path.join(OUT, "references.bib")
@@ -324,6 +261,13 @@ def create_manuscript_tex(results):
     cm_base = s_base_c["cm"]
     cm_all_c = s_all_c["cm"]
     boot_c = results["bootstrap"].get("as_conquered__all", {})
+    candidates = STRONG_CANDIDATES + MODERATE_CANDIDATES
+    candidate_count = len(candidates)
+    candidate_rate = apply_disrupted_assignment(df, "as_conquered")[
+        lambda frame: frame["entity"].isin(candidates)
+    ]["outcome_binary"].mean()
+    closure_all_c = s_all_c["closure"]
+    closure_all_s = results["scenarios"]["as_survived__all"]["closure"]
 
     # Table 4 computation
     df_all_c = apply_disrupted_assignment(
@@ -356,9 +300,9 @@ def create_manuscript_tex(results):
     or_sc_fo, p_sc_fo = fisher_or_p(sc, fo)
     or_sc_so, p_sc_so = fisher_or_p(sc, so)
     or_fc_fo, p_fc_fo = fisher_or_p(fc, fo)
+    or_fc_fo_str = r"\infty" if np.isinf(or_fc_fo) else f"{or_fc_fo:.2f}"
 
     # Table 1 data
-    candidates = STRONG_CANDIDATES + MODERATE_CANDIDATES
     table1_rows = []
     rationale_en = {
         "\u6f22\u671d\uff08\u524d\u6f22\u301c\u5f8c\u6f22\uff09": "Excluded from Mediterranean network; Silk Road provided limited overland contact only.",
@@ -380,9 +324,11 @@ def create_manuscript_tex(results):
     table2_rows = []
     for d_mode, d_label in [("as_conquered", "Overtaken"),
                             ("as_survived", "Survived")]:
-        for c_key, c_label in [("baseline", "Baseline"),
-                               ("strong", "+5 Strong"),
-                               ("all", "+7 All")]:
+        for c_key, c_label in [
+            ("baseline", "Baseline"),
+            ("strong", f"+{len(STRONG_CANDIDATES)} Strong"),
+            ("all", f"+{candidate_count} All"),
+        ]:
             key = f"{d_mode}__{c_key}"
             s = results["scenarios"][key]
             sig = "*" if s["fisher_ban_p"] < 0.05 else ""
@@ -394,6 +340,7 @@ def create_manuscript_tex(results):
 
     # Table 3 data
     lr_all_c = results["scenarios"]["as_conquered__all"]["logistic"]
+    lr_all_coefs = lr_all_c["with_ban"]["coefs"]
     table3_rows = []
     if lr_all_c.get("with_ban", {}).get("converged"):
         var_labels = {
@@ -406,7 +353,7 @@ def create_manuscript_tex(results):
             "has_external_patron": "External patron",
             "has_maritime_ban": "Network closure dummy",
         }
-        coefs = lr_all_c["with_ban"]["coefs"]
+        coefs = lr_all_coefs
         for var, label in var_labels.items():
             v = coefs[var]
             sig = "*" if v["p"] < 0.05 else (r"\dag" if v["p"] < 0.10 else "")
@@ -427,7 +374,7 @@ def create_manuscript_tex(results):
         tex.append(line)
 
     # Preamble
-    W(r"% Springer Nature LaTeX Template — Cliometrica submission")
+    W(r"% Reproducible manuscript source — target: Explorations in Economic History")
     W(r"% Generated by create_manuscript_latex.py")
     W(r"\documentclass[pdflatex,sn-basic]{sn-jnl}")
     W()
@@ -479,25 +426,26 @@ def create_manuscript_tex(results):
 
     # Abstract
     W(r"\abstract{")
-    W("Why do some states collapse while others endure? This study proposes that structural "
+    W("Why do some states collapse while others endure? This exploratory study proposes that structural "
       "exclusion from the dominant technological network of an era---not merely deliberate "
-      "trade closure---is a recurring driver of state vulnerability, because it severs the flow "
-      "of technical knowledge and allows a cumulative technology gap to open between connected "
-      f"and excluded polities. Using a comparative dataset of {N} historical polities spanning "
-      "antiquity to the present, we distinguish between policy-driven isolation (e.g., Ming "
+      "trade closure---is a candidate correlate of state vulnerability, with technology-flow "
+      "disruption proposed as one possible explanation for divergence between connected and "
+      f"excluded polities. Using a comparative dataset of {N} historical polities spanning "
+      "antiquity to the present, assembled as an AI-assisted exploratory dataset rather than a "
+      "public-data measurement dataset, we distinguish between policy-driven isolation (e.g., Ming "
       r"\emph{haijin}, Tokugawa \emph{sakoku}) and what we term `technical network exclusion': "
       "involuntary disconnection from prevailing exchange networks due to geographic or "
-      "technological constraints. Policy-based closure reduces but does not eliminate technology "
+      "technological constraints. Policy-based closure can reduce without eliminating technology "
       r"transfer (e.g., \emph{rangaku} via Dejima under \emph{sakoku}), whereas technical "
-      "exclusion severs it entirely. "
-      "Reclassifying seven technically excluded polities transforms a non-significant "
-      f"association between closure and conquest (Fisher's exact test $p = {s_base_c['fisher_ban_p']:.3f}$) "
-      f"into a significant one ($p = {s_all_c['fisher_ban_p']:.3f}$); all seven were eventually conquered. "
-      "Multivariate logistic regression confirms that external threat and institutional quality "
-      "are the strongest predictors of collapse, while the stock--flow odds ratio "
-      f"(OR $= {cm_base['OR']:.3f}$) remains stable across all scenarios. We argue that the "
+      "exclusion is coded as more severe involuntary disconnection. "
+      f"Across a post hoc reclassification of {candidate_count} technically excluded polities, "
+      f"the one-sided Fisher exact p-value for closure and conquest changes from "
+      f"{s_base_c['fisher_ban_p']:.3f} to {s_all_c['fisher_ban_p']:.3f}; all {candidate_count} were coded as eventually conquered. "
+      "Within these exploratory codings, multivariate logistic regression shows the largest "
+      "conditional associations for external threat and institutional quality, while the stock--flow odds ratio "
+      f"(OR $= {cm_base['OR']:.3f}$) remains stable across all scenarios. We present the "
       "underlying mechanism---technology flow disruption leading to an accumulating "
-      "civilization-level gap---generalizes beyond maritime isolation. As the dominant network "
+      "civilization-level gap---as a hypothesis beyond maritime isolation. As the dominant network "
       "shifts from sea lanes to semiconductors, artificial intelligence, and advanced robotics, "
       "states structurally excluded from these technological platforms may face analogous "
       "vulnerabilities.")
@@ -533,10 +481,10 @@ def create_manuscript_tex(results):
       r"concentrate power and discourage innovation---undermine long-run prosperity. The "
       r"other emphasizes external connectivity: trade openness, technology diffusion, and "
       r"the consequences of isolation \citep{FindlayORourke2007, Mokyr2002}. Our "
-      r"contribution lies at the intersection. We argue that disconnection from the dominant "
-      r"exchange network is an upstream cause that erodes both institutional quality and "
-      r"technological capacity---the very factors that the internal-dynamics literature "
-      r"identifies as proximate causes of collapse.")
+      r"contribution lies at the intersection. We examine whether disconnection from the dominant "
+      r"exchange network is associated with institutional quality and technological capacity---"
+      r"the factors that the internal-dynamics literature identifies as proximate explanations "
+      r"of collapse.")
     W()
     W(r"The literature on trade and isolation has overwhelmingly focused on deliberate "
       r"closure: the maritime prohibitions (\emph{haijin}) of Ming China, the \emph{sakoku} "
@@ -548,22 +496,22 @@ def create_manuscript_tex(results):
       r"or the Timurid dynasty were not isolated because their rulers chose closure; they were "
       r"isolated because the dominant exchange networks of their era did not reach them. If "
       r"these polities exhibit the same elevated conquest risk as deliberately closed ones, "
-      r"then the mechanism at work is not the policy decision to close but the disconnection "
-      r"itself.")
+      r"then the pattern would be consistent with disconnection, rather than the policy "
+      r"decision alone, as a candidate explanation.")
     W()
-    W(r"We propose that the critical channel is technology flow. Maritime trade was never "
+    W(r"We hypothesize that technology flow is a relevant channel. Maritime trade was never "
       r"merely an exchange of goods; it was the primary vehicle through which military "
       r"techniques, navigation methods, metallurgy, and institutional innovations diffused "
       r"across polities \citep{Pomeranz2000, Mokyr2002}. Deliberate closure, such as "
       r"\emph{sakoku}, restricted but did not eliminate this flow---Tokugawa Japan maintained "
       r"a narrow conduit of Western scientific knowledge (\emph{rangaku}) through the Dutch "
-      r"trading post at Dejima. Technical exclusion, by contrast, severed the flow entirely. "
-      r"The result was a cumulative technology gap: over generations, excluded polities fell "
-      r"progressively behind the technological frontier, and when contact with a more advanced "
+      r"trading post at Dejima. Technical exclusion, by contrast, is hypothesized to restrict "
+      r"a broader set of channels. A possible result is a cumulative technology gap: over "
+      r"generations, excluded polities may fall behind the technological frontier, and when contact with a more advanced "
       r"civilization eventually occurred---often through military confrontation---the gap "
-      r"proved fatal. This is, in essence, a quantitative restatement of a long-recognized "
+      r"may have increased vulnerability. This is, in essence, a quantitative restatement of a long-recognized "
       r"pattern: when civilizations at markedly different technological levels collide, the "
-      r"less advanced one tends to be absorbed or destroyed \citep{Diamond1997}.")
+      r"less advanced one may face elevated vulnerability \citep{Diamond1997}.")
     W()
     W(r"This paper makes three contributions. First, we construct a comparative historical "
       f"dataset of {N} polities spanning six eras (ancient, medieval, early modern, modern, "
@@ -575,16 +523,15 @@ def create_manuscript_tex(results):
       r"involuntary disconnection of a polity from the dominant exchange network of its era "
       r"due to geographic or technological constraints. In the maritime age, this took the "
       r"form of geographic exclusion from sea routes, but the underlying mechanism generalizes "
-      r"across eras. Third, we conduct a systematic sensitivity analysis in which seven "
+      f"across eras. Third, we conduct a post hoc sensitivity analysis in which {candidate_count} "
       r"technically excluded polities are reclassified from `no closure' to `technical "
       r"network exclusion,' testing whether the closure--conquest association is an artifact "
       r"of how isolation is defined.")
     W()
-    W(r"The principal finding is that reclassification transforms a non-significant baseline "
-      f"association (Fisher's exact test, one-sided $p = {s_base_c['fisher_ban_p']:.3f}$) "
-      f"into a significant one ($p = {s_all_c['fisher_ban_p']:.3f}$), while the core "
-      f"stock--flow odds ratio remains unchanged at {cm_base['OR']:.3f}. All seven technically "
-      r"excluded polities were eventually conquered. This result suggests that what matters "
+    W(r"The reclassification changes the one-sided Fisher exact p-value from "
+      f"{s_base_c['fisher_ban_p']:.3f} at baseline to {s_all_c['fisher_ban_p']:.3f}, while the core "
+      f"stock--flow odds ratio remains unchanged at {cm_base['OR']:.3f}. All {candidate_count} technically "
+      r"excluded polities were coded as eventually conquered. This exploratory result is consistent with the hypothesis that what matters "
       r"for state survival is not whether closure was chosen but whether the polity was "
       r"connected to the era's critical exchange platform.")
     W()
@@ -613,16 +560,16 @@ def create_manuscript_tex(results):
     W()
     W(r"\subsection{Dataset construction}\label{sec:data-construction}")
     W()
-    W(f"The dataset comprises {N} historical polities selected from standard reference works "
-      r"\citep{FindlayORourke2007, Kennedy1987, Turchin2009}. Selection criteria required "
-      r"that each polity be (i) identifiable as a distinct political entity with a defined "
-      r"period of existence, and (ii) classifiable along the dimensions described below. Each "
-      r"polity is coded on multiple variables: predominant resource base (stock or flow), "
-      r"stock index (0--1 continuous), trade openness (0--1 continuous), closure type, "
-      r"historical outcome, geographic barrier, external threat level, relative population, "
-      r"technological position, institutional quality, regime duration, and presence of an "
-      r"external patron. The complete dataset, including modern-country equivalents and "
-      r"turning-point events, is provided in Supplementary Table~S1.")
+    W(f"The dataset comprises {N} manually constructed polity--period cases assembled with AI "
+      r"assistance. The author supplied the conceptual research question but no record-level "
+      r"values; the cases and original values were assigned during the AI-assisted assembly on "
+      r"13 May 2026 rather than extracted from a public dataset. The variables predominant resource base, stock "
+      r"index (0--1), trade openness (0--1), geographic barrier, external threat, relative "
+      r"population, technological position, and institutional quality are therefore exploratory "
+      r"AI-assisted judgments rather than observed measurements or validated expert ratings. "
+      r"Closure type, historical outcome, and external-patron status are historically anchored "
+      r"classifications. The complete editable dataset is provided in Supplementary Table~S1 and the public "
+      r"code permits readers to replace any coding and rerun every analysis.")
     W()
     W(f"Of the {N} polities, {n_stock} are classified as stock-oriented and {n_flow} as "
       f"flow-oriented. Historical outcomes fall into three categories: overtaken "
@@ -650,9 +597,9 @@ def create_manuscript_tex(results):
     W(r"Categories 1 through 3 represent deliberate closure: a policy choice by identifiable "
       r"agents. Category 4 represents structural exclusion: isolation imposed by geography "
       r"and the limits of contemporary transport technology. This distinction is central to "
-      r"our argument, because if structural exclusion produces the same outcomes as deliberate "
-      r"closure, the causal mechanism must lie in the disconnection itself rather than in the "
-      r"decision to disconnect.")
+      r"our argument, because a similar outcome pattern under structural and deliberate "
+      r"exclusion would be consistent with disconnection itself, rather than the decision "
+      r"alone, as the relevant hypothesis.")
     W()
 
     W(r"\subsection{Technical network exclusion: definition and candidates}"
@@ -669,7 +616,11 @@ def create_manuscript_tex(results):
       r"transport and communication infrastructure of their era had not yet extended effective "
       r"connectivity to their region.")
     W()
-    W(r"We identify seven reclassification candidates in two tiers (Table~\ref{tab:reclass}).")
+    W(f"We identify {candidate_count} reclassification candidates in two tiers.")
+    W()
+    W(r"The candidate set was developed after the initial dataset analysis and was neither "
+      r"prespecified nor coded with outcomes blinded. It is therefore evaluated only as a "
+      r"post hoc sensitivity analysis (Table~\ref{tab:reclass}).")
     W()
 
     # Table 1
@@ -698,15 +649,19 @@ def create_manuscript_tex(results):
       r"\label{sec:methods-binarization}")
     W()
     W(r"The three-category outcome (overtaken, disrupted, survived) poses a classification "
-      r"problem. The 18 `disrupted' polities experienced regime collapse but were not clearly "
+      f"problem. The {n_disrupted} `disrupted' polities experienced regime collapse but were not clearly "
       r"conquered by an external power; they could reasonably be grouped with either outcome. "
       r"Rather than making a single arbitrary assignment, we adopt a dual-assignment design: "
-      r"in the `disrupted $\to$ overtaken' scenario, all 18 are coded as conquered (yielding "
-      r"64 conquered, 32 survived); in the `disrupted $\to$ survived' scenario, they are coded "
-      r"as having survived (46 conquered, 50 survived). Crossed with three closure "
-      r"reclassification levels (baseline, +5 strong candidates, +7 all candidates), this "
+      f"in the `disrupted $\\to$ overtaken' scenario, all {n_disrupted} are coded as conquered "
+      f"(yielding {s_base_c['cm']['TP'] + s_base_c['cm']['FN']} conquered, "
+      f"{s_base_c['cm']['FP'] + s_base_c['cm']['TN']} survived); in the "
+      f"`disrupted $\\to$ survived' scenario, they are coded as having survived (yielding "
+      f"{results['scenarios']['as_survived__baseline']['cm']['TP'] + results['scenarios']['as_survived__baseline']['cm']['FN']} conquered, "
+      f"{results['scenarios']['as_survived__baseline']['cm']['FP'] + results['scenarios']['as_survived__baseline']['cm']['TN']} survived). "
+      f"Crossed with three closure reclassification levels (baseline, "
+      f"+{len(STRONG_CANDIDATES)} strong candidates, +{candidate_count} all candidates), this "
       r"produces $3 \times 2 = 6$ scenarios. All results are reported across all six to "
-      r"demonstrate robustness.")
+      r"show sensitivity to these coding choices.")
     W()
 
     W(r"\subsection{Stock--flow association}\label{sec:methods-stockflow}")
@@ -730,17 +685,17 @@ def create_manuscript_tex(results):
 
     W(r"\subsection{Multivariate logistic regression}\label{sec:methods-logistic}")
     W()
-    W(r"To assess whether the closure--conquest association survives adjustment for "
-      r"confounders, we fit logistic regression models with the binarized outcome as the "
+    W(r"To describe the closure--conquest association after covariate adjustment, we fit "
+      r"logistic regression models with the binarized outcome as the "
       r"dependent variable and the following covariates: stock-dominant indicator, geographic "
       r"barrier, external threat level, technological position, institutional quality, era "
       r"(coded ordinally), external patron indicator, and a network closure indicator. We "
       r"report exponentiated coefficients (odds ratios) with 95\% confidence intervals.")
     W()
 
-    W(r"\subsection{Bootstrap validation}\label{sec:methods-bootstrap}")
+    W(r"\subsection{Bootstrap uncertainty assessment}\label{sec:methods-bootstrap}")
     W()
-    W(r"We validate the stock--flow OR using a nonparametric bootstrap (5{,}000 resamples, "
+    W(r"We assess uncertainty in the stock--flow OR using a nonparametric bootstrap (5{,}000 resamples, "
       r"percentile method, seed = 42). This provides a distribution-free confidence interval "
       r"that does not depend on asymptotic normality---a relevant consideration given the "
       r"modest sample size.")
@@ -773,15 +728,14 @@ def create_manuscript_tex(results):
       f"some form of network closure have a conquest rate of "
       f"{_pct(s_base_c['ban_rate'])}, compared with {_pct(s_base_c['no_ban_rate'])} for open "
       f"polities (Fisher $p = {s_base_c['fisher_ban_p']:.4f}$, not significant). "
-      f"Reclassifying five strong candidates as technically excluded raises the "
+      f"Reclassifying {len(STRONG_CANDIDATES)} strong candidates as technically excluded raises the "
       f"closure-group conquest rate to {_pct(s_strong_c['ban_rate'])} "
       f"(Fisher $p = {s_strong_c['fisher_ban_p']:.4f}$). "
-      f"Including all seven candidates strengthens the association further: conquest rate $= "
-      f"{_pct(s_all_c['ban_rate'])}$, Fisher $p = {s_all_c['fisher_ban_p']:.4f}$ "
-      r"(Fig.~\ref{fig:conquest-rates}, Fig.~\ref{fig:fisher-pvalues}). "
-      "The progressive strengthening of significance as technically excluded polities are "
-      "added suggests that these polities genuinely belong in the closure group rather than "
-      "among the open polities.")
+      f"Including all {candidate_count} candidates yields a conquest rate of "
+      f"{_pct(s_all_c['ban_rate'])}$, Fisher $p = {s_all_c['fisher_ban_p']:.4f}$. "
+      "The progressive change is reported as a sensitivity pattern under the alternative "
+      "classification, not as independent validation that the candidates belong in the "
+      "closure group.")
     W()
 
     # Table 2
@@ -800,7 +754,10 @@ def create_manuscript_tex(results):
     W(r"\end{table}")
     W()
 
-    # Figures 1 and 2 (referenced, placed at end per journal style)
+    # Figures 1 and 2
+    W(r"Figure~\ref{fig:conquest-rates} compares closure and open-group conquest rates "
+      r"across the six scenarios.")
+    W()
     W(r"\begin{figure}[htbp]")
     W(r"\centering")
     W(r"\includegraphics[width=\textwidth]{figures/Fig1.png}")
@@ -808,6 +765,9 @@ def create_manuscript_tex(results):
       r"reclassification scenarios under both disrupted assignments.}")
     W(r"\label{fig:conquest-rates}")
     W(r"\end{figure}")
+    W()
+    W(r"Figure~\ref{fig:fisher-pvalues} shows how the one-sided Fisher $p$-value changes "
+      r"under the same reclassification sequence.")
     W()
     W(r"\begin{figure}[htbp]")
     W(r"\centering")
@@ -823,79 +783,83 @@ def create_manuscript_tex(results):
     # ════════════════════════════════════════
     W(r"\section{Sensitivity Analysis: Technical Network Exclusion}\label{sec:sensitivity}")
     W()
-    W(r"\subsection{Closure-type disaggregation and the dose--response pattern}"
+    W(r"\subsection{Closure-type disaggregation}"
       r"\label{sec:sensitivity-dose}")
     W()
-    W(r"Figure~\ref{fig:closure-types} disaggregates conquest rates by closure type under "
-      r"the 7-country reclassification. A striking gradient emerges. Technically excluded "
-      r"polities---those with zero access to the dominant exchange networks of their "
-      r"era---exhibit a 100\% conquest rate. Policy-based maritime bans, which restricted but "
-      r"did not entirely eliminate external contact, show lower rates (76.9\% under disrupted "
-      r"$\to$ overtaken; 69.2\% under disrupted $\to$ survived). \emph{Sakoku} polities show "
-      r"100\% and 50\% rates under the two assignments, reflecting the borderline case of "
+    W(f"Under the {candidate_count}-country reclassification, technically excluded "
+      r"polities---those classified as severely disconnected from the dominant exchange networks of their "
+      f"era---have a {_pct(candidate_rate)} conquest rate. Policy-based maritime bans, which restricted but "
+      r"did not entirely eliminate external contact, show lower rates "
+      f"({_pct(closure_all_c['maritime_ban']['rate'])} under disrupted "
+      f"$\\to$ overtaken; {_pct(closure_all_s['maritime_ban']['rate'])} under disrupted $\\to$ survived). "
+      f"\\emph{{Sakoku}} polities show {_pct(closure_all_c['sakoku']['rate'])} and "
+      f"{_pct(closure_all_s['sakoku']['rate'])} rates under the two assignments, reflecting the borderline case of "
       r"Tokugawa Japan, which maintained a narrow technological conduit (\emph{rangaku}) "
       r"through Dejima. Bloc-type closures show the lowest conquest rates among closure "
       r"categories, consistent with the interpretation that bloc membership preserves some "
       r"technology transfer through alliance-internal channels.")
     W()
-    W(r"This ordering---technical exclusion (100\%) $>$ policy ban $>$ \emph{sakoku} (with "
-      r"partial conduit) $>$ bloc $>$ open---is consistent with a dose--response relationship "
-      r"between the degree of technology flow disruption and the probability of conquest. The "
-      r"more completely a polity was severed from the technological frontier of its era, the "
-      r"higher the likelihood that it was eventually overtaken.")
+    W(r"Figure~\ref{fig:closure-types} shows that the category rates are not strictly monotonic: technical exclusion and \emph{sakoku} "
+      r"have the highest rates, maritime bans are intermediate, and bloc closure is lower than "
+      r"the open category. The disaggregation therefore motivates the technology-flow "
+      r"hypothesis but does not independently establish a dose--response relationship.")
     W()
 
     # Figure 3
     W(r"\begin{figure}[htbp]")
     W(r"\centering")
     W(r"\includegraphics[width=\textwidth]{figures/Fig3.png}")
-    W(r"\caption{Conquest rates by closure type under the 7-country reclassification "
-      r"scenario.}")
+    W(f"\\caption{{Conquest rates by closure type under the {candidate_count}-country "
+      f"reclassification scenario.}}")
     W(r"\label{fig:closure-types}")
     W(r"\end{figure}")
     W()
 
-    W(r"\subsection{Robustness of the stock--flow odds ratio}"
+    W(r"\subsection{Stability of the stock--flow odds ratio}"
       r"\label{sec:sensitivity-or}")
     W()
     W(f"The stock--flow OR $= {cm_all_c['OR']:.3f}$ is identical across all three "
       r"reclassification scenarios. This invariance is expected: the reclassification changes "
       r"the closure-type label but does not alter the stock/flow or outcome coding. Bootstrap "
-      f"validation (5{{,}}000 resamples) yields a median OR of "
+      f"resampling (5{{,}}000 draws) yields a median OR of "
       f"${boot_c.get('median', 0):.3f}$ (95\\% CI "
       f"[{boot_c.get('ci_lo', 0):.3f}, {boot_c.get('ci_hi', 0):.3f}]), "
-      r"confirming the stability of the point estimate and its independence from the closure "
-      r"reclassification.")
+      r"The median is close to the point estimate, but the interval is wide and includes the null.")
     W()
 
     W(r"\subsection{Multivariate regression stability}\label{sec:sensitivity-regression}")
     W()
     W(r"Figure~\ref{fig:forest-plot} presents the multivariate logistic regression results "
-      r"under the 7-country reclassification with disrupted $\to$ overtaken. External threat "
-      r"remains the strongest predictor of conquest ($p < 0.01$ across all scenarios), "
-      r"followed by institutional quality and era (both $p < 0.01$). The network closure "
-      r"indicator is not independently significant after controlling for these covariates. "
-      r"This pattern is informative: it suggests that closure operates not as a direct cause "
-      r"but through the same channels---technological stagnation, institutional decay, and "
-      r"heightened external vulnerability---that the multivariate model already captures "
-      r"(Table~\ref{tab:regression}).")
+      f"under the {candidate_count}-country reclassification with disrupted $\\to$ overtaken. "
+      f"In this specification, external threat ($p = {lr_all_coefs['external_threat']['p']:.4f}$), "
+      f"institutional quality ($p = {lr_all_coefs['institutional_quality']['p']:.4f}$), and era "
+      f"($p = {lr_all_coefs['era_code']['p']:.4f}$) have the smallest p-values. The network closure "
+      f"indicator is not independently significant ($p = {lr_all_coefs['has_maritime_ban']['p']:.4f}$) "
+      r"after controlling for these covariates. "
+      r"This pattern is consistent with, but does not identify, an indirect pathway involving "
+      r"technological stagnation, institutional change, and heightened external vulnerability---"
+      r"covariates that the multivariate model already captures.")
     W()
 
     # Figure 4
     W(r"\begin{figure}[htbp]")
     W(r"\centering")
     W(r"\includegraphics[width=0.9\textwidth]{figures/Fig4.png}")
-    W(r"\caption{Forest plot of multivariate logistic regression odds ratios (7-country "
-      r"reclassification, disrupted $\to$ overtaken).}")
+    W(f"\\caption{{Forest plot of multivariate logistic regression odds ratios "
+      f"({candidate_count}-country reclassification, disrupted $\\to$ overtaken).}}")
     W(r"\label{fig:forest-plot}")
     W(r"\end{figure}")
     W()
 
     # Table 3
     if table3_rows:
+        W(r"Table~\ref{tab:regression} reports the corresponding coefficients, confidence "
+          r"intervals, and $p$-values.")
+        W()
         W(r"\begin{table}[htbp]")
-        W(r"\caption{Multivariate logistic regression results (7-country reclassification, "
-          r"disrupted $\to$ overtaken). $^{*}$~$p < 0.05$, $^{\dag}$~$p < 0.10$.}")
+        W(f"\\caption{{Multivariate logistic regression results ({candidate_count}-country "
+          r"reclassification, disrupted $\to$ overtaken). $^{*}$~$p < 0.05$, "
+          r"$^{\dag}$~$p < 0.10$.}")
         W(r"\label{tab:regression}")
         W(r"\begin{tabular*}{\textwidth}{@{\extracolsep\fill}lcccc}")
         W(r"\toprule")
@@ -916,85 +880,81 @@ def create_manuscript_tex(results):
     W(r"\subsection{The mechanism: technology flow disruption and cumulative divergence}"
       r"\label{sec:disc-mechanism}")
     W()
-    W(r"The central finding is that the closure--conquest association becomes significant "
-      r"only when technically excluded polities are grouped with deliberately closed ones. "
-      r"This tells us something important about the mechanism at work. If closure harmed "
+    W(r"In the post hoc sensitivity analysis, the closure--conquest association changes "
+      r"when technically excluded polities are grouped with deliberately closed ones. "
+      r"This classification sensitivity suggests a pattern relevant to the proposed mechanism. If closure harmed "
       r"states solely through lost trade revenue or reduced diplomatic leverage, then only "
       r"deliberate closure---which blocks trade but not necessarily knowledge---should matter. "
-      r"The fact that technical exclusion (which severs both trade and technology flow) "
-      r"strengthens the association, while policy-based closure alone does not reach "
-      r"significance, points toward technology flow as the critical channel.")
+      r"Treating technical exclusion as a more severe disconnection category strengthens "
+      r"the association relative to the policy-only coding, which is consistent with "
+      r"technology flow as a candidate channel.")
     W()
-    W(r"The dose--response pattern in Figure~\ref{fig:closure-types} reinforces this "
-      r"interpretation. Technical exclusion (zero technology transfer) produces a 100\% "
+    W(r"The closure-type pattern in Figure~\ref{fig:closure-types} provides a descriptive "
+      f"comparison. Technical exclusion (classified as severe disconnection) is associated with a {_pct(candidate_rate)} "
       r"conquest rate. Policy-based maritime bans, which restrict but do not eliminate "
-      r"technology flow, show conquest rates below 80\%. The case of Tokugawa Japan is "
+      f"technology flow, show a {_pct(closure_all_c['maritime_ban']['rate'])} rate under the main assignment. The case of Tokugawa Japan is "
       r"particularly instructive: despite the comprehensive closure of \emph{sakoku}, the "
       r"Tokugawa regime deliberately maintained a narrow conduit for Western scientific and "
       r"technical knowledge (\emph{rangaku}) through the Dutch trading post at Dejima. This "
       r"selective preservation of a technology transfer channel---even within an otherwise "
-      r"closed system---appears to have made a material difference. Japan was disrupted by "
+      r"closed system---is consistent with its avoidance of conquest. Japan was disrupted by "
       r"the forced opening of 1853--54 but was not conquered; it reconstituted itself as the "
       r"Meiji state and rapidly closed the technology gap. Bloc closures, which preserve "
-      r"substantial within-bloc technology sharing, show the lowest rates among closure "
-      r"categories. The ordering of conquest risk mirrors the ordering of technology flow "
-      r"disruption.")
+      r"substantial within-bloc technology sharing, show the lowest rate among closure "
+      r"categories. Because the category rates are not strictly monotonic, this comparison is "
+      r"hypothesis-generating rather than evidence of a dose--response relationship.")
     W()
-    W(r"The multivariate results complete the picture. External threat and institutional "
-      r"quality are the strongest predictors of conquest, and the network closure indicator "
+    W(r"The multivariate results provide a descriptive comparison. External threat and institutional "
+      r"quality have the largest conditional associations with conquest, and the network closure indicator "
       r"loses significance after their inclusion (Table~\ref{tab:regression}, "
-      r"Fig.~\ref{fig:forest-plot}). This is precisely what a technology-gap mechanism would "
-      r"predict: closure does not kill states directly. Rather, it initiates a causal "
-      r"chain---technological stagnation erodes institutional adaptive capacity, which in "
-      r"turn leaves the polity unable to respond to external threats. This causal ordering is "
+      r"Fig.~\ref{fig:forest-plot}). This is compatible with a technology-gap hypothesis, "
+      r"but does not establish one. One possible sequence is that technological stagnation "
+      r"weakens institutional adaptive capacity and leaves a polity less able to respond to "
+      r"external threats. This proposed ordering is "
       r"consistent with \citeauthor{AcemogluRobinson2012}'s (\citeyear{AcemogluRobinson2012}) "
-      r"emphasis on institutions as the proximate determinant of national success, while "
-      r"suggesting that network access is the deeper, upstream variable: exclusion degrades "
-      r"the very institutions that the inclusive-institutions framework identifies as "
-      r"essential. The mediating variables (external threat, institutional quality) absorb "
-      r"the explanatory power of the closure variable because they lie downstream in the "
-      r"causal pathway.")
+      r"emphasis on institutions as a proximate determinant of national success. Network "
+      r"access is treated here as a possible antecedent for future testing, not as an "
+      r"identified upstream cause. The candidate mediating variables (external threat, "
+      r"institutional quality) absorb the conditional association of the closure variable, "
+      r"but the cross-sectional exploratory design cannot establish direction, mediation, "
+      r"or causation.")
     W()
 
-    W(r"\subsection{First contact and the tragedy of civilizational divergence}"
+    W(r"\subsection{First contact and a proposed divergence mechanism}"
       r"\label{sec:disc-firstcontact}")
     W()
-    W(r"Our findings can be read as a quantitative formulation of a long-recognized "
+    W(r"The exploratory results can be read as a quantitative formulation of a long-recognized "
       r"historical pattern: when civilizations that have developed in isolation encounter a "
-      r"technologically superior civilization, the outcome is overwhelmingly unfavorable for "
-      r"the less advanced party \citep{Diamond1997, DiamondBellwood2003}. The 100\% conquest "
-      r"rate among technically excluded polities is striking not because the pattern is new, "
-      r"but because it emerges from a systematic, cross-historical dataset rather than from "
-      r"selective case studies.")
+      r"technologically superior civilization, asymmetric outcomes may follow "
+      f"\\citep{{Diamond1997, DiamondBellwood2003}}. Within this selected dataset, "
+      f"{_pct(candidate_rate)} of technically excluded cases are coded as conquered. The post "
+      r"hoc classification and non-probability case selection prevent treating that descriptive "
+      r"rate as a general historical estimate.")
     W()
-    W(r"The mechanism we propose is cumulative divergence through technology flow disruption. "
+    W(r"The hypothesized pathway is cumulative divergence through technology flow disruption. "
       r"International exchange networks carried not only goods but military techniques, "
       r"metallurgical innovations, navigational knowledge, and institutional models "
       r"\citep{Mokyr2002, Pomeranz2000}. Polities connected to these networks could adopt, "
-      r"adapt, and build upon innovations generated elsewhere. Polities severed from them "
-      r"could not. Over generations, the technology gap widened---a process analogous to the "
+      r"adapt, and build upon innovations generated elsewhere. Polities with weaker access may "
+      r"have less capacity to do so. Over generations, a technology gap may widen---a process analogous to the "
       r"long-run consequences of network disruption documented by \citet{Nunn2008}, who showed "
       r"that regions more heavily affected by the slave trade experienced persistent "
       r"underdevelopment centuries later. When contact with a more advanced civilization "
-      r"eventually occurred---often through military expansion---the accumulated gap proved "
-      r"decisive. The Han Dynasty encountered Central Asian and eventually Roman-linked "
-      r"military traditions; the Khmer Empire faced the expanding Siamese and Vietnamese "
-      r"states that were integrated into maritime trade networks; Kievan Rus' was overrun by "
-      r"the Mongol armies that had absorbed the military technologies of multiple "
-      r"civilizations across Eurasia.")
+      r"eventually occurred---often through military expansion---an accumulated gap may have "
+      r"contributed to vulnerability. These case narratives motivate the proposed sequence but "
+      r"do not test it.")
     W()
-    W(r"Crucially, the tragedy of first contact is a function of the gap, not of the contact "
-      r"itself. Policy-closed polities that maintained narrow conduits of technology "
-      r"transfer---Japan's \emph{rangaku}, Qing China's limited Canton trade---accumulated "
-      r"smaller gaps and, correspondingly, were more likely to survive or reconstitute after "
-      r"disruption. The implication is that what determines the outcome of civilizational "
-      r"encounter is the degree and duration of technology flow disruption that preceded it.")
+    W(r"Policy-closed polities that maintained narrow conduits of technology "
+      r"transfer---Japan's \emph{rangaku} and Qing China's limited Canton trade---suggest a "
+      r"contrast worth testing against more severe disconnection. The present data do not "
+      r"measure residual technology flow or cumulative gaps and therefore cannot determine "
+      r"whether those mechanisms explain the coded outcomes.")
     W()
     W(r"This finding has a corollary that is worth stating explicitly. If the critical "
       r"variable is not closure itself but the residual technology flow that closure permits, "
       r"then polities that close their borders while deliberately maintaining selective "
       r"channels for frontier knowledge occupy a qualitatively different position from those "
-      r"that are totally severed. Our dataset contains several instances of such conditional "
+      r"that are more severely disconnected. Our dataset contains several instances of such conditional "
       r"closure. Tokugawa Japan preserved access to Western science through \emph{rangaku} at "
       r"Dejima and was disrupted but not conquered, reconstituting itself as the Meiji state. "
       r"Early Qing China maintained the Canton system---a single, tightly controlled port of "
@@ -1019,7 +979,7 @@ def create_manuscript_tex(results):
       r"technological frontier, and institutional dynamics that our dataset does not "
       r"capture---likely condition the effectiveness of conditional closure. The policy "
       r"question, then, is not binary (open or closed) but conditional, and the conditions "
-      r"under which selective channels suffice to prevent a fatal technology gap remain an "
+      r"under which selective channels suffice to prevent a large technology gap remain an "
       r"open and consequential problem for future research. Readers interested in tracing "
       r"these cases in detail are referred to Supplementary Table~S1, which documents the "
       f"specific turning-point events and outcomes for all {N} polities in the dataset.")
@@ -1045,44 +1005,35 @@ def create_manuscript_tex(results):
       r"income differences today, while \citet{AcemogluJohnsonRobinson2002} demonstrate that "
       r"colonial-era institutional reversals reshaped global inequality---both consistent "
       r"with the view that early technological access has persistent, cumulative consequences. "
-      r"Geographic isolation no longer blocks physical trade---the completion of global "
-      r"shipping and communication networks has largely eliminated geographic network "
-      r"exclusion as a threat. But a new form of structural exclusion has emerged: states may "
-      r"be cut off from the technological frontier not by mountains and oceans but by export "
+      r"Global shipping and communication networks have reduced, but not eliminated, geographic "
+      r"barriers to exchange. A further form of structural exclusion may arise when states are "
+      r"cut off from the technological frontier not by mountains and oceans but by export "
       r"controls on advanced semiconductors, by the concentration of AI training "
       r"infrastructure in a handful of countries, or by the institutional and human-capital "
       r"barriers that prevent participation in cutting-edge research networks.")
     W()
-    W(r"The historical parallel is direct. Just as the Khmer Empire or the Timurid dynasty "
-      r"could not access the exchange networks that carried military and institutional "
-      r"innovations, a contemporary state excluded from advanced semiconductor fabrication or "
-      r"AI model development may find itself on the wrong side of a widening technology gap. "
+    W(r"An exploratory analogy can be drawn to contemporary states excluded from advanced "
+      r"semiconductor fabrication or AI model development, which may face a widening technology gap. "
       r"If the gap grows large enough, the eventual `first contact'---whether military, "
-      r"economic, or geopolitical---may produce outcomes analogous to those documented in our "
-      r"historical dataset. The form of the dominant network changes; the logic of cumulative "
-      r"divergence through exclusion does not.")
+      r"economic, or geopolitical---could produce asymmetric outcomes. Whether the historical "
+      r"coding captures a comparable process is an empirical question for future data.")
     W()
     W(r"We stress that this extrapolation is speculative and cannot be tested within our "
       r"historical dataset. The contemporary world differs from the premodern era in ways "
       r"that may attenuate or amplify the mechanism: nuclear deterrence, international "
       r"institutions, and the speed of modern communication all introduce novel dynamics. "
-      r"Nevertheless, the historical regularity we document---that structural exclusion from "
-      r"the dominant technological network is associated with state collapse---provides a "
+      r"The post hoc association in the selected cases provides a provisional "
       r"framework for thinking about which dimensions of modern technological access may be "
       r"most consequential.")
     W()
 
-    W(r"\subsection{Robustness of the stock--flow framework and the question of "
+    W(r"\subsection{Stability of the stock--flow framework and the question of "
       r"resource-base transitions}\label{sec:disc-stockflow}")
     W()
-    W(f"The invariance of the stock--flow OR ({cm_all_c['OR']:.3f}) across all "
-      r"reclassification scenarios confirms that the core finding of the stock--flow "
-      r"framework---that stock-oriented polities face moderately higher conquest risk---is "
-      r"independent of how network isolation is defined. The reclassification changes the "
-      r"closure subanalysis but leaves the primary classification untouched. This separation "
-      r"is analytically useful: it shows that the stock--flow distinction and the "
-      r"closure--conquest association capture related but distinct dimensions of state "
-      r"vulnerability.")
+    W(f"The stock--flow OR ({cm_all_c['OR']:.3f}) is unchanged across the reclassification "
+      r"scenarios because those scenarios alter closure labels but not stock/flow or outcome "
+      r"coding. The stock--flow and closure comparisons should therefore be interpreted as "
+      r"separate exploratory descriptions rather than as evidence of distinct causal dimensions.")
     W()
     W(f"Crossing these two dimensions yields a four-cell classification whose conquest rates "
       f"are reported in Table~\\ref{{tab:stockflow-closure}}. Flow-oriented polities without "
@@ -1096,14 +1047,14 @@ def create_manuscript_tex(results):
       f"$p = {p_sc_fo:.3f}$). Within stock-oriented polities, the effect of closure "
       f"corresponds to an OR of {or_sc_so:.2f} ($p = {p_sc_so:.3f}$). Within flow-oriented "
       f"polities, the effect of closure yields an OR of "
-      f"{'$\\infty$' if np.isinf(or_fc_fo) else f'${or_fc_fo:.2f}$'} ($p = {p_fc_fo:.3f}$), "
+      f"${or_fc_fo_str}$ ($p = {p_fc_fo:.3f}$), "
       f"though the cell size ($n = {fc['n']}$) precludes reliable inference.")
     W()
 
     # Table 4
     W(r"\begin{table}[htbp]")
-    W(r"\caption{Conquest rates by resource-base orientation and closure status (7-country "
-      r"reclassification, disrupted $=$ conquered).}")
+    W(f"\\caption{{Conquest rates by resource-base orientation and closure status "
+      f"({candidate_count}-country reclassification, disrupted $=$ conquered).}}")
     W(r"\label{tab:stockflow-closure}")
     W(r"\begin{tabular*}{\textwidth}{@{\extracolsep\fill}lcccc}")
     W(r"\toprule")
@@ -1115,7 +1066,6 @@ def create_manuscript_tex(results):
         W(f"{label} & {cell['c']} & {cell['s']} & {cell['n']} & {rate_str} \\\\")
     W(r"\botrule")
     W(r"\end{tabular*}")
-    or_fc_fo_str = r"\infty" if np.isinf(or_fc_fo) else f"{or_fc_fo:.2f}"
     W(r"\footnotetext{Fisher exact tests (one-sided): stock + closed vs.\ flow + open, "
       f"OR $= {or_sc_fo:.2f}$, $p = {p_sc_fo:.3f}$; within stock, closed vs.\\ open, "
       f"OR $= {or_sc_so:.2f}$, $p = {p_sc_so:.3f}$; within flow, closed vs.\\ open, "
@@ -1171,32 +1121,27 @@ def create_manuscript_tex(results):
     # ════════════════════════════════════════
     W(r"\section{Conclusion}\label{sec:conclusion}")
     W()
-    W(r"This paper has shown that reclassifying seven technically excluded polities---those "
-      r"severed from the dominant exchange networks of their era by geography and technology "
-      r"rather than by policy---transforms a non-significant association between closure and "
-      f"conquest into a significant one ($p = {s_all_c['fisher_ban_p']:.3f}$), while the "
+    W(f"Within this AI-assisted exploratory dataset, a post hoc reclassification of {candidate_count} technically excluded polities---those "
+      r"coded as disconnected from the dominant exchange networks of their era by geography "
+      r"and technology rather than by policy---changes the one-sided Fisher exact p-value to "
+      f"{s_all_c['fisher_ban_p']:.3f}, while the "
       f"core stock--flow odds ratio remains unchanged (OR $= {cm_base['OR']:.3f}$). The "
-      r"100\% conquest rate among technically excluded polities, the dose--response gradient "
-      r"across closure types, and the absorption of the closure effect by external threat "
-      r"and institutional quality in multivariate models all point to a consistent mechanism: "
-      r"disruption of technology flow leads to cumulative divergence from the technological "
-      r"frontier, eroding the institutional and military capacity needed to survive contact "
-      r"with more connected civilizations.")
+      f"{_pct(candidate_rate)} conquest rate among technically excluded polities, the closure-type comparison, "
+      r"and the absorption of the closure effect by external threat "
+      r"and institutional quality in multivariate models are consistent with, but do not "
+      r"establish, a proposed mechanism in which disruption of technology flow leads to "
+      r"cumulative divergence from the technological frontier.")
     W()
     W(r"The broader implication is that this mechanism is not specific to any single network "
       r"form. In every era, there exists a dominant network through which frontier "
       r"technologies diffuse. Polities excluded from that network---whether by oceans, "
       r"mountains, policy, or, in the contemporary period, by semiconductor export controls "
-      r"and AI infrastructure concentration---risk falling into the same pattern of "
-      r"cumulative divergence. The historical record we document provides a quantitative "
-      r"baseline for assessing this risk. Whether the tragedy of first contact between "
-      r"unequally developed civilizations will find new expression in the age of artificial "
-      r"intelligence is a question that the coming decades will answer; our analysis suggests "
-      r"it is one worth asking. Equally pressing is the converse question suggested by the "
-      r"Tokugawa precedent: whether a state that recognizes the risk of network exclusion "
-      r"can, through deliberate maintenance of selective technology channels, prevent the "
-      r"accumulation of a fatal gap---even while restricting broader engagement with the "
-      r"outside world.")
+      r"and AI infrastructure concentration---may warrant comparison with historical patterns "
+      r"of cumulative divergence. The exploratory comparison does not establish that modern "
+      r"technological restrictions will produce the same outcomes. The converse question "
+      r"suggested by the Tokugawa precedent is whether a state that recognizes the risk of "
+      r"network exclusion can, through deliberate maintenance of selective technology channels, "
+      r"reduce divergence while restricting broader engagement with the outside world.")
     W()
 
     # ════════════════════════════════════════
@@ -1208,12 +1153,24 @@ def create_manuscript_tex(results):
     W(r"[To be completed by author]")
     W()
     W(r"\subsection*{Competing Interests}")
-    W(r"The author declares no competing interests.")
+    W(r"[To be confirmed by author]")
+    W()
+    W(r"\subsection*{Author Contributions (CRediT)}")
+    W(r"[To be completed by author]")
     W()
     W(r"\subsection*{Data Availability}")
-    W(r"The complete dataset and analysis code are available at [repository URL]. "
+    W(r"The complete dataset and analysis code are available at "
+      r"\url{https://github.com/bougtoir/beyond-gdp-national-power}. "
       f"Supplementary Table~S1 provides the full dataset of {N} polities with all coded "
       r"variables.")
+    W()
+    W(r"\subsection*{Declaration of Generative AI and AI-Assisted Technologies in the "
+      r"Manuscript Preparation Process}")
+    W(r"During the preparation of this work, the author used Devin (Cognition AI) to "
+      r"support code execution, dataset documentation, source auditing, and drafting and "
+      r"editing. The author reviewed and edited the content as needed and takes full "
+      r"responsibility for the content of the published article. [Author confirmation "
+      r"required before submission.]")
     W()
 
     # JEL
@@ -1258,7 +1215,9 @@ def create_table_s1_latex(results):
     tex.append(r"\begin{document}")
     tex.append(r"\footnotesize")
     tex.append(r"\begin{longtable}{rlllllllp{6cm}}")
-    tex.append(r"\caption{Supplementary Table S1: Full dataset of 96 historical polities.} \\")
+    tex.append(
+        f"\\caption{{Supplementary Table S1: Full dataset of {len(df)} historical polities.}} \\\\"
+    )
     tex.append(r"\toprule")
     tex.append(r"\# & Polity & Modern Country & Period & Era & Dominant & Closure & Outcome & Turning-Point Event \\")
     tex.append(r"\midrule")
@@ -1301,7 +1260,15 @@ def create_table_s1_latex(results):
 # Cover letter (LaTeX)
 # ═══════════════════════════════════════════════════════════════
 
-def create_cover_letter_tex():
+def create_cover_letter_tex(results):
+    N = results["N"]
+    s_base_c = results["scenarios"]["as_conquered__baseline"]
+    s_all_c = results["scenarios"]["as_conquered__all"]
+    cm_base = s_base_c["cm"]
+    candidate_count = len(STRONG_CANDIDATES + MODERATE_CANDIDATES)
+    candidate_rate = apply_disrupted_assignment(results["df"], "as_conquered")[
+        lambda frame: frame["entity"].isin(STRONG_CANDIDATES + MODERATE_CANDIDATES)
+    ]["outcome_binary"].mean()
     tex = []
     tex.append(r"\documentclass[11pt]{letter}")
     tex.append(r"\usepackage[margin=2.5cm]{geometry}")
@@ -1310,26 +1277,28 @@ def create_cover_letter_tex():
     tex.append(r"\signature{Author Name\\Affiliation\\Email}")
     tex.append(r"\address{Author Name\\Affiliation\\City, Country\\Email}")
     tex.append(r"\begin{document}")
-    tex.append(r"\begin{letter}{Prof.\ Claude Diebolt\\Managing Editor, \emph{Cliometrica}}")
-    tex.append(r"\opening{Dear Professor Diebolt,}")
+    tex.append(r"\begin{letter}{The Editors, \emph{Explorations in Economic History}}")
+    tex.append(r"\opening{Dear Editors,}")
     tex.append("")
     tex.append(r"I am pleased to submit the manuscript entitled ``Network Exclusion and "
                r"State Collapse: From Maritime Isolation to Technological Access Denial in "
-               r"the Long Run of History'' for consideration by \emph{Cliometrica}.")
+               r"the Long Run of History'' for consideration by "
+               r"\emph{Explorations in Economic History}.")
     tex.append("")
-    tex.append(r"Using a comparative dataset of 96 historical polities spanning antiquity to "
-               r"the present, we distinguish between deliberate closure (policy-based trade "
+    tex.append(f"Using an AI-assisted exploratory dataset of {N} historical polities rather "
+               r"than a public-data measurement dataset, we distinguish "
+               r"between deliberate closure (policy-based trade "
                r"bans, \emph{sakoku}, bloc membership) and what we term \emph{technical "
                r"network exclusion}: involuntary disconnection from the dominant exchange "
                r"network of an era due to geographic or technological constraints. The "
                r"manuscript presents four features that we believe are of interest to the "
                r"journal's readership.")
     tex.append("")
-    tex.append(r"First, a systematic sensitivity analysis demonstrates that reclassifying "
-               r"seven technically excluded polities transforms a non-significant association "
-               r"between closure and conquest (Fisher's exact $p = 0.187$) into a significant "
-               r"one ($p = 0.020$), while the core stock--flow odds ratio remains stable "
-               r"(OR $= 1.774$).")
+    tex.append(r"First, a post hoc sensitivity analysis reports that reclassifying "
+               f"{candidate_count} technically excluded polities changes the one-sided Fisher exact p-value "
+               f"for closure and conquest from {s_base_c['fisher_ban_p']:.3f} to "
+               f"{s_all_c['fisher_ban_p']:.3f} within the current codings, while the core stock--flow odds ratio remains stable "
+               f"(OR $= {cm_base['OR']:.3f}$).")
     tex.append("")
     tex.append(r"Second, we analyze conditional closure---cases where polities maintained "
                r"selective technology channels while restricting broader trade. Examples "
@@ -1339,19 +1308,19 @@ def create_cover_letter_tex():
                r"open/closed dichotomy is insufficient; the conditions under which selective "
                r"channels mitigate technology gaps merit further investigation.")
     tex.append("")
-    tex.append(r"Third, the dose--response gradient across closure types---technical "
-               r"exclusion (100\% conquest) $>$ policy bans $>$ \emph{sakoku} (with partial "
-               r"conduit) $>$ bloc $>$ open---points to technology flow disruption, rather "
-               r"than trade restriction per se, as the critical mechanism.")
+    tex.append(r"Third, the closure-type comparison shows a "
+               f"{_pct(candidate_rate)} conquest rate among the technically excluded candidates, "
+               r"but the category rates are not strictly monotonic. We therefore present "
+               r"technology-flow disruption as a hypothesis rather than an identified mechanism.")
     tex.append("")
-    tex.append(r"Fourth, the mechanism generalizes beyond geographic isolation: as the "
+    tex.append(r"Fourth, the hypothesis may generalize beyond geographic isolation: as the "
                r"dominant network shifts from sea lanes to semiconductors, AI, and advanced "
                r"robotics, states structurally excluded from these platforms may face "
                r"analogous vulnerabilities.")
     tex.append("")
-    tex.append(r"The manuscript contains approximately 9{,}000 words, 4 tables, and 4 "
-               r"figures. Supplementary Table~S1 provides the complete dataset. We confirm "
-               r"that this work has not been published or submitted elsewhere.")
+    tex.append(r"The manuscript includes the analysis tables, figures, and a complete "
+               r"Supplementary Table~S1 dataset. [Before submission, please confirm that "
+               r"this work has not been published or submitted elsewhere.]")
     tex.append("")
     tex.append(r"We suggest the following reviewers based on their expertise in quantitative "
                r"economic history:")
@@ -1360,8 +1329,8 @@ def create_cover_letter_tex():
                r"and long-run development")
     tex.append(r"\item Prof.\ Stephen Broadberry (University of Oxford) --- comparative "
                r"economic history and GDP estimation")
-    tex.append(r"\item Prof.\ Peter Turchin (Complexity Science Hub Vienna) --- quantitative "
-               r"historical dynamics and empire formation")
+    tex.append(r"\item Prof.\ Nathan Nunn (University of British Columbia) --- long-run "
+               r"persistence and historical institutions")
     tex.append(r"\end{itemize}")
     tex.append("")
     tex.append(r"\closing{Sincerely,}")
@@ -1372,6 +1341,61 @@ def create_cover_letter_tex():
     with open(path, "w", encoding="utf-8") as f:
         f.write("\n".join(tex))
     print("  Cover letter (LaTeX) saved to", path)
+    return path
+
+
+def create_cover_letter_docx(results):
+    N = results["N"]
+    s_base_c = results["scenarios"]["as_conquered__baseline"]
+    s_all_c = results["scenarios"]["as_conquered__all"]
+    cm_base = s_base_c["cm"]
+    candidate_count = len(STRONG_CANDIDATES + MODERATE_CANDIDATES)
+    candidate_rate = apply_disrupted_assignment(results["df"], "as_conquered")[
+        lambda frame: frame["entity"].isin(STRONG_CANDIDATES + MODERATE_CANDIDATES)
+    ]["outcome_binary"].mean()
+
+    doc = Document()
+    for section in doc.sections:
+        section.top_margin = Cm(2.5)
+        section.bottom_margin = Cm(2.5)
+        section.left_margin = Cm(2.5)
+        section.right_margin = Cm(2.5)
+    doc.styles["Normal"].font.name = "Times New Roman"
+    doc.styles["Normal"].font.size = Pt(12)
+
+    doc.add_paragraph("[Date]")
+    doc.add_paragraph("The Editors\nExplorations in Economic History")
+    doc.add_paragraph("Dear Editors,")
+    doc.add_paragraph(
+        "I am pleased to submit “Network Exclusion and State Collapse: From Maritime "
+        "Isolation to Technological Access Denial in the Long Run of History” for "
+        "consideration by Explorations in Economic History."
+    )
+    doc.add_paragraph(
+        f"The study uses an AI-assisted exploratory dataset of {N} historical polity-period "
+        "cases rather than a public-data measurement dataset. It distinguishes deliberate "
+        "closure from technical network exclusion and makes the complete editable coding and "
+        "case-level source supplement publicly available."
+    )
+    doc.add_paragraph(
+        f"In the post hoc sensitivity analysis, reclassifying {candidate_count} technically excluded "
+        f"polities changes the one-sided Fisher exact p-value from "
+        f"{s_base_c['fisher_ban_p']:.3f} to {s_all_c['fisher_ban_p']:.3f}; the stock–flow "
+        f"odds ratio remains {cm_base['OR']:.3f}. The candidates have a "
+        f"{candidate_rate:.1%} conquest rate in the current codings, but closure-category "
+        "rates are not strictly monotonic, so technology-flow disruption is presented as a "
+        "hypothesis rather than an identified mechanism."
+    )
+    doc.add_paragraph(
+        "The manuscript includes analysis tables, figures, a complete supplementary dataset, "
+        "variable metadata, and a field-level historical source supplement. [Before submission, "
+        "please confirm that the work is not under consideration elsewhere.]"
+    )
+    doc.add_paragraph("Sincerely,\n\n[Author Name]\n[Affiliation]\n[Email]")
+
+    path = os.path.join(OUT, "cover_letter.docx")
+    doc.save(path)
+    print("  Cover letter (DOCX) saved to", path)
     return path
 
 
@@ -1402,7 +1426,9 @@ def main():
     s1_path = create_table_s1_latex(results)
 
     print("Creating cover letter (LaTeX)...")
-    cl_path = create_cover_letter_tex()
+    cl_path = create_cover_letter_tex(results)
+    print("Creating cover letter (DOCX)...")
+    create_cover_letter_docx(results)
 
     # Copy sn-jnl.cls and bst to manuscript dir
     for f in ["sn-jnl.cls"]:
@@ -1423,6 +1449,8 @@ def main():
     pdf = _compile_latex(tex_path, OUT)
     if pdf:
         print(f"  PDF compiled: {pdf}")
+    elif shutil.which("pdflatex") is None:
+        print("  PDF compilation skipped: pdflatex is not installed.")
     else:
         print("  WARNING: PDF compilation failed. Check LaTeX logs.")
 
