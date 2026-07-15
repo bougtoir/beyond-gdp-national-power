@@ -732,7 +732,7 @@ def create_manuscript_tex(results):
       f"closure-group conquest rate to {_pct(s_strong_c['ban_rate'])} "
       f"(Fisher $p = {s_strong_c['fisher_ban_p']:.4f}$). "
       f"Including all {candidate_count} candidates yields a conquest rate of "
-      f"{_pct(s_all_c['ban_rate'])}$, Fisher $p = {s_all_c['fisher_ban_p']:.4f}$. "
+      f"{_pct(s_all_c['ban_rate'])}, Fisher $p = {s_all_c['fisher_ban_p']:.4f}$. "
       "The progressive change is reported as a sensitivity pattern under the alternative "
       "classification, not as independent validation that the candidates belong in the "
       "closure group.")

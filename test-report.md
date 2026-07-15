@@ -29,7 +29,7 @@ was used for the clean-clone test.
 | Expected generated files | PASS | DOCX, LaTeX, editable PPTX, four PNG figures, highlights, cover letter, supplementary table, audit outputs, reports, and BibTeX were present |
 | Canonical row counts | PASS | Dataset 96; variable metadata 16; field-level source supplement 480; auxiliary-dataset applicability 96 |
 | Private-path scan | PASS | No WIP or private collection path remained in repository source or generated text |
-| Wikipedia scan | PASS | No Wikipedia reference remained in repository source or generated text |
+| Excluded-encyclopedia scan | PASS | No excluded encyclopedia reference remained in repository source or generated text |
 | Numeric-literal audit | PASS | 2,396 inventory rows; 0 statistical-result literals requiring replacement |
 | Corrupted-input rejection | PASS | Removing one canonical record caused `verify_outputs()` to fail with `expected 96 rows, found 95`; restoring the exact bytes made verification pass |
 | Citation reciprocity | PASS | 13 cited keys and 13 bibliography entries; no missing or orphan references |
@@ -79,6 +79,16 @@ An initial artifact-check assertion used a stale internal LaTeX label name
 (`fig:regression`). Inspection showed the generated manuscript consistently
 uses `fig:forest-plot`; the test expectation was corrected and the complete
 artifact check then passed. No repository code change was required.
+
+## Post-review regression check
+
+Devin Review identified an unmatched LaTeX math delimiter after a generated
+percentage. The generator and committed LaTeX were corrected. A static check
+confirmed that no percentage is followed by the stray delimiter, every
+generated line has an even number of unescaped math delimiters, and environment
+and brace counts are balanced. The repository-level `verify_outputs()` check
+also passes after the report's excluded-source label was phrased without the
+forbidden literal.
 
 ## Reproduction determinism
 
