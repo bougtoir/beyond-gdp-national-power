@@ -30,7 +30,7 @@ was used for the clean-clone test.
 | Canonical row counts | PASS | Dataset 96; variable metadata 16; field-level source supplement 480; auxiliary-dataset applicability 96 |
 | Private-path scan | PASS | No WIP or private collection path remained in repository source or generated text |
 | Excluded-encyclopedia scan | PASS | No excluded encyclopedia reference remained in repository source or generated text |
-| Numeric-literal audit | PASS | 2,396 inventory rows; 0 statistical-result literals requiring replacement |
+| Numeric-literal audit | PASS | 2,401 inventory rows; 0 statistical-result literals requiring replacement |
 | Corrupted-input rejection | PASS | Removing one canonical record caused `verify_outputs()` to fail with `expected 96 rows, found 95`; restoring the exact bytes made verification pass |
 | Citation reciprocity | PASS | 13 cited keys and 13 bibliography entries; no missing or orphan references |
 | LaTeX labels and references | PASS | No missing labels and no unreferenced figure/table labels |
@@ -98,6 +98,22 @@ in-memory probe reintroduced the old token and the delimiter checker rejected
 it at manuscript line 137; the corrected file and `verify_outputs()` both
 passed. Direct PDF compilation remains untested because `pdflatex` is not
 installed.
+
+## Post-review resilience checks
+
+Two additional review findings were reproduced and fixed:
+
+- A synthetic non-converged multivariate model now generates explanatory
+  Fig. 4 output plus PPTX, DOCX, and LaTeX fallbacks without dereferencing an
+  empty coefficient dictionary. The regression table is omitted, the DOCX
+  contains three sequentially numbered tables, the PPTX retains four cited
+  figure slides, and no conditional coefficient claim is emitted.
+- An empty source catalog now produces a header-only URL-status CSV with zero
+  rows instead of indexing an empty result list.
+
+Both targeted probes passed. Normal-data DOCX and LaTeX regeneration,
+Python compilation, `git diff --check`, the 2,401-row numeric inventory with
+zero statistical-result blockers, and `reproduce.verify_outputs()` also pass.
 
 ## Reproduction determinism
 

@@ -340,9 +340,11 @@ def create_manuscript_tex(results):
 
     # Table 3 data
     lr_all_c = results["scenarios"]["as_conquered__all"]["logistic"]
-    lr_all_coefs = lr_all_c["with_ban"]["coefs"]
+    lr_all_with_ban = lr_all_c.get("with_ban", {})
+    lr_all_converged = bool(lr_all_with_ban.get("converged"))
+    lr_all_coefs = lr_all_with_ban.get("coefs", {}) if lr_all_converged else {}
     table3_rows = []
-    if lr_all_c.get("with_ban", {}).get("converged"):
+    if lr_all_converged:
         var_labels = {
             "dominant_binary": "Stock-dominant",
             "geo_barrier": "Geographic barrier",
@@ -829,24 +831,35 @@ def create_manuscript_tex(results):
 
     W(r"\subsection{Multivariate regression stability}\label{sec:sensitivity-regression}")
     W()
-    W(r"Figure~\ref{fig:forest-plot} presents the multivariate logistic regression results "
-      f"under the {candidate_count}-country reclassification with disrupted $\\to$ overtaken. "
-      f"In this specification, external threat ($p = {lr_all_coefs['external_threat']['p']:.4f}$), "
-      f"institutional quality ($p = {lr_all_coefs['institutional_quality']['p']:.4f}$), and era "
-      f"($p = {lr_all_coefs['era_code']['p']:.4f}$) have the smallest p-values. The network closure "
-      f"indicator is not independently significant ($p = {lr_all_coefs['has_maritime_ban']['p']:.4f}$) "
-      r"after controlling for these covariates. "
-      r"This pattern is consistent with, but does not identify, an indirect pathway involving "
-      r"technological stagnation, institutional change, and heightened external vulnerability---"
-      r"covariates that the multivariate model already captures.")
+    if lr_all_converged:
+        W(r"Figure~\ref{fig:forest-plot} presents the multivariate logistic regression results "
+          f"under the {candidate_count}-country reclassification with disrupted $\\to$ overtaken. "
+          f"In this specification, external threat ($p = {lr_all_coefs['external_threat']['p']:.4f}$), "
+          f"institutional quality ($p = {lr_all_coefs['institutional_quality']['p']:.4f}$), and era "
+          f"($p = {lr_all_coefs['era_code']['p']:.4f}$) have the smallest p-values. The network closure "
+          f"indicator is not independently significant ($p = {lr_all_coefs['has_maritime_ban']['p']:.4f}$) "
+          r"after controlling for these covariates. "
+          r"This pattern is consistent with, but does not identify, an indirect pathway involving "
+          r"technological stagnation, institutional change, and heightened external vulnerability---"
+          r"covariates that the multivariate model already captures.")
+    else:
+        W(r"Figure~\ref{fig:forest-plot} records that the multivariate logistic regression "
+          f"did not converge under the {candidate_count}-country reclassification with disrupted "
+          r"$\to$ overtaken. Coefficient estimates, confidence intervals, and conditional "
+          r"associations are therefore not reported or interpreted for this specification.")
     W()
 
     # Figure 4
     W(r"\begin{figure}[htbp]")
     W(r"\centering")
     W(r"\includegraphics[width=0.9\textwidth]{figures/Fig4.png}")
-    W(f"\\caption{{Forest plot of multivariate logistic regression odds ratios "
-      f"({candidate_count}-country reclassification, disrupted $\\to$ overtaken).}}")
+    if lr_all_converged:
+        W(f"\\caption{{Forest plot of multivariate logistic regression odds ratios "
+          f"({candidate_count}-country reclassification, disrupted $\\to$ overtaken).}}")
+    else:
+        W(f"\\caption{{Multivariate logistic regression output "
+          f"({candidate_count}-country reclassification, disrupted $\\to$ overtaken); "
+          r"the model did not converge.}")
     W(r"\label{fig:forest-plot}")
     W(r"\end{figure}")
     W()
@@ -904,20 +917,25 @@ def create_manuscript_tex(results):
       r"categories. Because the category rates are not strictly monotonic, this comparison is "
       r"hypothesis-generating rather than evidence of a dose--response relationship.")
     W()
-    W(r"The multivariate results provide a descriptive comparison. External threat and institutional "
-      r"quality have the largest conditional associations with conquest, and the network closure indicator "
-      r"loses significance after their inclusion (Table~\ref{tab:regression}, "
-      r"Fig.~\ref{fig:forest-plot}). This is compatible with a technology-gap hypothesis, "
-      r"but does not establish one. One possible sequence is that technological stagnation "
-      r"weakens institutional adaptive capacity and leaves a polity less able to respond to "
-      r"external threats. This proposed ordering is "
-      r"consistent with \citeauthor{AcemogluRobinson2012}'s (\citeyear{AcemogluRobinson2012}) "
-      r"emphasis on institutions as a proximate determinant of national success. Network "
-      r"access is treated here as a possible antecedent for future testing, not as an "
-      r"identified upstream cause. The candidate mediating variables (external threat, "
-      r"institutional quality) absorb the conditional association of the closure variable, "
-      r"but the cross-sectional exploratory design cannot establish direction, mediation, "
-      r"or causation.")
+    if lr_all_converged:
+        W(r"The multivariate results provide a descriptive comparison. External threat and institutional "
+          r"quality have the largest conditional associations with conquest, and the network closure indicator "
+          r"loses significance after their inclusion (Table~\ref{tab:regression}, "
+          r"Fig.~\ref{fig:forest-plot}). This is compatible with a technology-gap hypothesis, "
+          r"but does not establish one. One possible sequence is that technological stagnation "
+          r"weakens institutional adaptive capacity and leaves a polity less able to respond to "
+          r"external threats. This proposed ordering is "
+          r"consistent with \citeauthor{AcemogluRobinson2012}'s (\citeyear{AcemogluRobinson2012}) "
+          r"emphasis on institutions as a proximate determinant of national success. Network "
+          r"access is treated here as a possible antecedent for future testing, not as an "
+          r"identified upstream cause. The candidate mediating variables (external threat, "
+          r"institutional quality) absorb the conditional association of the closure variable, "
+          r"but the cross-sectional exploratory design cannot establish direction, mediation, "
+          r"or causation.")
+    else:
+        W(r"The multivariate specification did not converge, so it cannot support conditional "
+          r"comparisons or a mediation interpretation. The descriptive and sensitivity results "
+          r"remain exploratory and do not establish direction or causation.")
     W()
 
     W(r"\subsection{First contact and a proposed divergence mechanism}"
@@ -1411,7 +1429,7 @@ def main():
     create_figures(results)
 
     print("Creating PPTX...")
-    create_pptx()
+    create_pptx(results)
 
     print("Creating Table S1 (docx)...")
     create_table_s1(results)

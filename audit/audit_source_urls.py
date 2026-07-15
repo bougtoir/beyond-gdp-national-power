@@ -19,6 +19,7 @@ URL_FIELDS = (
     "outcome_source_url",
     "patron_source_url",
 )
+OUTPUT_FIELDS = ("url", "http_status", "final_url", "error", "checked_at_utc")
 
 
 def _probe(url: str) -> dict[str, str]:
@@ -71,7 +72,7 @@ def main() -> None:
 
     with OUTPUT_PATH.open("w", encoding="utf-8", newline="") as file:
         writer = csv.DictWriter(
-            file, fieldnames=results[0].keys(), lineterminator="\n"
+            file, fieldnames=OUTPUT_FIELDS, lineterminator="\n"
         )
         writer.writeheader()
         writer.writerows(results)

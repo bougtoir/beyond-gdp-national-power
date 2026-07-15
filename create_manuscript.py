@@ -649,6 +649,18 @@ def create_figures(results):
             Line2D([0], [0], marker="o", color="#7f8c8d", label="p ≥ 0.10", markersize=8, linestyle="-"),
         ]
         ax.legend(handles=legend_elements, loc="lower right", fontsize=8)
+    else:
+        ax.axis("off")
+        ax.text(
+            0.5,
+            0.5,
+            "Multivariate logistic regression did not converge.\n"
+            "Coefficient estimates are not displayed.",
+            ha="center",
+            va="center",
+            fontsize=13,
+            transform=ax.transAxes,
+        )
 
     fig.tight_layout()
     fig.savefig(os.path.join(FIG, "Fig4.png"), dpi=300, bbox_inches="tight")
@@ -661,10 +673,15 @@ def create_figures(results):
 # PPTX generation
 # ════════════════════════════════════════════════════════════
 
-def create_pptx():
+def create_pptx(results):
     prs = Presentation()
     prs.slide_width = PptxInches(13.333)
     prs.slide_height = PptxInches(7.5)
+    lr_converged = bool(
+        results["scenarios"]["as_conquered__all"]["logistic"]
+        .get("with_ban", {})
+        .get("converged")
+    )
 
     fig_files = sorted([f for f in os.listdir(FIG) if f.endswith(".png")])
     captions = {
@@ -678,6 +695,8 @@ def create_pptx():
             "Fig. 4  Forest plot of multivariate logistic regression odds ratios "
             f"({len(STRONG_CANDIDATES + MODERATE_CANDIDATES)}-country reclassification, "
             "disrupted→overtaken)."
+            if lr_converged
+            else "Fig. 4  Multivariate logistic regression output; the model did not converge."
         ),
     }
 
@@ -836,7 +855,10 @@ def create_manuscript(results):
     ]["outcome_binary"].mean()
     closure_all_c = s_all_c["closure"]
     closure_all_s = results["scenarios"]["as_survived__all"]["closure"]
-    lr_all_c = s_all_c["logistic"]["with_ban"]["coefs"]
+    lr_all_model = s_all_c["logistic"].get("with_ban", {})
+    lr_all_converged = bool(lr_all_model.get("converged"))
+    lr_all_coefs = lr_all_model.get("coefs", {}) if lr_all_converged else {}
+    interaction_table_number = 4 if lr_all_converged else 3
 
     # ── Page setup ──
     for section in doc.sections:
@@ -1372,18 +1394,26 @@ def create_manuscript(results):
     )
 
     doc.add_heading("5.3  Multivariate regression stability", level=2)
-    doc.add_paragraph(
-        f"Figure 4 presents the multivariate logistic regression results under the {candidate_count}-country "
-        f"reclassification with disrupted → overtaken. In this specification, external threat "
-        f"(p = {lr_all_c['external_threat']['p']:.4f}), institutional quality "
-        f"(p = {lr_all_c['institutional_quality']['p']:.4f}), and era "
-        f"(p = {lr_all_c['era_code']['p']:.4f}) have the smallest p-values. The network closure "
-        f"indicator is not independently significant (p = {lr_all_c['has_maritime_ban']['p']:.4f}) "
-        "after controlling for these covariates. This pattern is consistent with, "
-        "but does not identify, an indirect pathway involving technological stagnation, "
-        "institutional change, and heightened external vulnerability—covariates that the "
-        "multivariate model already captures."
-    )
+    if lr_all_converged:
+        doc.add_paragraph(
+            f"Figure 4 presents the multivariate logistic regression results under the {candidate_count}-country "
+            f"reclassification with disrupted → overtaken. In this specification, external threat "
+            f"(p = {lr_all_coefs['external_threat']['p']:.4f}), institutional quality "
+            f"(p = {lr_all_coefs['institutional_quality']['p']:.4f}), and era "
+            f"(p = {lr_all_coefs['era_code']['p']:.4f}) have the smallest p-values. The network closure "
+            f"indicator is not independently significant (p = {lr_all_coefs['has_maritime_ban']['p']:.4f}) "
+            "after controlling for these covariates. This pattern is consistent with, "
+            "but does not identify, an indirect pathway involving technological stagnation, "
+            "institutional change, and heightened external vulnerability—covariates that the "
+            "multivariate model already captures."
+        )
+    else:
+        doc.add_paragraph(
+            f"Figure 4 records that the multivariate logistic regression did not converge under the "
+            f"{candidate_count}-country reclassification with disrupted → overtaken. Coefficient estimates, "
+            "confidence intervals, and conditional associations are therefore not reported or interpreted "
+            "for this specification."
+        )
 
     # Insert Fig 4 inline
     p = doc.add_paragraph()
@@ -1397,17 +1427,19 @@ def create_manuscript(results):
     run = p2.add_run("Fig. 4  ")
     run.bold = True
     run.font.size = Pt(10)
-    p2.add_run(
+    fig4_caption = (
         "Forest plot of multivariate logistic regression odds ratios "
         f"({candidate_count}-country reclassification, disrupted → overtaken)."
-    ).font.size = Pt(10)
+        if lr_all_converged
+        else "Multivariate logistic regression output; the model did not converge."
+    )
+    p2.add_run(fig4_caption).font.size = Pt(10)
 
     # ── Table 3: Multivariate results ──
-    doc.add_paragraph(
-        "Table 3 reports the corresponding coefficients, confidence intervals, and p-values."
-    )
-    lr_all_c = results["scenarios"]["as_conquered__all"]["logistic"]
-    if lr_all_c.get("with_ban", {}).get("converged"):
+    if lr_all_converged:
+        doc.add_paragraph(
+            "Table 3 reports the corresponding coefficients, confidence intervals, and p-values."
+        )
         table3 = doc.add_table(rows=1, cols=5)
         table3.style = "Table Grid"
         table3.alignment = WD_TABLE_ALIGNMENT.CENTER
@@ -1430,7 +1462,7 @@ def create_manuscript(results):
             "has_external_patron": "External patron",
             "has_maritime_ban": "Network closure dummy",
         }
-        coefs = lr_all_c["with_ban"]["coefs"]
+        coefs = lr_all_coefs
         for var, label in var_labels.items():
             v = coefs[var]
             sig = "*" if v["p"] < 0.05 else "\u2020" if v["p"] < 0.10 else ""
@@ -1486,21 +1518,28 @@ def create_manuscript(results):
         "not strictly monotonic, this comparison is hypothesis-generating rather than evidence "
         "of a dose–response relationship."
     )
-    doc.add_paragraph(
-        "The multivariate results provide a descriptive comparison. External threat and institutional "
-        "quality have the largest conditional associations with conquest, and the network closure indicator "
-        "loses significance after their inclusion (Table 3, Fig. 4). This is compatible with "
-        "a technology-gap hypothesis, but does not establish one. One possible sequence is "
-        "that technological stagnation weakens institutional adaptive capacity and leaves a "
-        "polity less able to respond to external threats. This proposed ordering is consistent "
-        "with Acemoglu and Robinson's (2012) "
-        "emphasis on institutions as a proximate determinant of national success. Network "
-        "access is treated here as a possible antecedent for future testing, not as an "
-        "identified upstream cause. The candidate mediating variables (external threat, "
-        "institutional quality) absorb the conditional association of the closure variable, "
-        "but the cross-sectional exploratory design cannot establish direction, mediation, "
-        "or causation."
-    )
+    if lr_all_converged:
+        doc.add_paragraph(
+            "The multivariate results provide a descriptive comparison. External threat and institutional "
+            "quality have the largest conditional associations with conquest, and the network closure indicator "
+            "loses significance after their inclusion (Table 3, Fig. 4). This is compatible with "
+            "a technology-gap hypothesis, but does not establish one. One possible sequence is "
+            "that technological stagnation weakens institutional adaptive capacity and leaves a "
+            "polity less able to respond to external threats. This proposed ordering is consistent "
+            "with Acemoglu and Robinson's (2012) "
+            "emphasis on institutions as a proximate determinant of national success. Network "
+            "access is treated here as a possible antecedent for future testing, not as an "
+            "identified upstream cause. The candidate mediating variables (external threat, "
+            "institutional quality) absorb the conditional association of the closure variable, "
+            "but the cross-sectional exploratory design cannot establish direction, mediation, "
+            "or causation."
+        )
+    else:
+        doc.add_paragraph(
+            "The multivariate specification did not converge, so it cannot support conditional "
+            "comparisons or a mediation interpretation. The descriptive and sensitivity results "
+            "remain exploratory and do not establish direction or causation."
+        )
 
     doc.add_heading("6.2  First contact and a proposed divergence mechanism", level=2)
     doc.add_paragraph(
@@ -1653,7 +1692,7 @@ def create_manuscript(results):
     )
     doc.add_paragraph(
         f"Crossing these two dimensions yields a four-cell classification whose conquest "
-        f"rates are reported in Table 4. Flow-oriented polities without closure show the "
+        f"rates are reported in Table {interaction_table_number}. Flow-oriented polities without closure show the "
         f"lowest conquest rate ({fo['rate']:.1%}, n = {fo['n']}). Stock-oriented polities "
         f"without closure show a moderately elevated rate ({so['rate']:.1%}, n = {so['n']}). "
         f"Stock-oriented polities with closure show a markedly higher rate ({sc['rate']:.1%}, "
@@ -1670,7 +1709,7 @@ def create_manuscript(results):
     # Add Table 4: Stock–flow × closure interaction
     p_t4_title = doc.add_paragraph()
     run_t4 = p_t4_title.add_run(
-        "Table 4  Conquest rates by resource-base orientation and closure status "
+        f"Table {interaction_table_number}  Conquest rates by resource-base orientation and closure status "
         f"({candidate_count}-country reclassification, disrupted = conquered)"
     )
     run_t4.bold = True
@@ -1877,7 +1916,7 @@ def main():
     create_figures(results)
 
     print("Creating PPTX...")
-    create_pptx()
+    create_pptx(results)
 
     print("Creating Table S1...")
     create_table_s1(results)

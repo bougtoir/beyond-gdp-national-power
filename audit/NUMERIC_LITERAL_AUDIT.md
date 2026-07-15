@@ -2,9 +2,9 @@
 
 This inventory separates canonical input values, subjective AI-assisted scores, analysis/scenario parameters, layout constants, historical/bibliographic numbers, dynamically generated manuscript values, and potentially hard-coded statistical results.
 
-- Inventory rows: 2396
+- Inventory rows: 2401
 - High-priority rows: 672
-- Medium-priority rows: 1172
+- Medium-priority rows: 1175
 - Statistical result literals requiring replacement: 0
 
 ## Classification counts
@@ -16,12 +16,12 @@ This inventory separates canonical input values, subjective AI-assisted scores, 
 | `audit_implementation_literal` | 7 |
 | `bibliographic_or_source_number` | 37 |
 | `candidate_definition_or_analysis_parameter` | 80 |
-| `code_constant_requires_context` | 460 |
-| `display_or_layout_constant` | 251 |
+| `code_constant_requires_context` | 463 |
+| `display_or_layout_constant` | 252 |
 | `dynamically_generated_value_or_format_precision` | 76 |
 | `historical_date_or_prose_number` | 38 |
 | `historically_anchored_input_value` | 192 |
-| `manuscript_structure_or_cross_reference` | 77 |
+| `manuscript_structure_or_cross_reference` | 78 |
 | `prose_or_label_number` | 213 |
 | `sample_size_or_candidate_count_literal` | 9 |
 | `simulation_or_scenario_parameter` | 219 |
