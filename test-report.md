@@ -24,13 +24,14 @@ was used for the clean-clone test.
 | Python compilation | PASS | `python3 -m py_compile` succeeded for the loader, exporters, reproduction runner, audit scripts, analysis scripts, and manuscript generators |
 | Local full reproduction | PASS | `python reproduce.py` exited 0 in 587 seconds |
 | Public clone and dependency installation | PASS | A new clone and new in-repository virtual environment were created from the public feature branch; `pip install -r requirements.txt` completed |
-| Public-clone full reproduction | PASS | Final `python reproduce.py` exited 0 in 582 seconds |
+| Public-clone full reproduction | PASS | Final setup run exited 0 in 582 seconds; the PR test-mode rerun also exited 0 in 596 seconds |
 | Initial public-clone attempt | FAIL, FIXED | The first run completed all generators but the final provenance scan entered `.venv` and found a package-internal forbidden word. `reproduce.py` now excludes virtual-environment, Git, and cache directories; the final full run passed |
 | Expected generated files | PASS | DOCX, LaTeX, editable PPTX, four PNG figures, highlights, cover letter, supplementary table, audit outputs, reports, and BibTeX were present |
 | Canonical row counts | PASS | Dataset 96; variable metadata 16; field-level source supplement 480; auxiliary-dataset applicability 96 |
 | Private-path scan | PASS | No WIP or private collection path remained in repository source or generated text |
 | Wikipedia scan | PASS | No Wikipedia reference remained in repository source or generated text |
 | Numeric-literal audit | PASS | 2,396 inventory rows; 0 statistical-result literals requiring replacement |
+| Corrupted-input rejection | PASS | Removing one canonical record caused `verify_outputs()` to fail with `expected 96 rows, found 95`; restoring the exact bytes made verification pass |
 | Citation reciprocity | PASS | 13 cited keys and 13 bibliography entries; no missing or orphan references |
 | LaTeX labels and references | PASS | No missing labels and no unreferenced figure/table labels |
 | Abstract and keywords | PASS | Abstract 241 words; six English keywords |
@@ -42,6 +43,42 @@ was used for the clean-clone test.
 | Source-fabrication screen | PASS WITH SCOPE LIMITATION | No clearly fabricated bibliographic source was identified in the catalog/metadata/access audit; access failure alone was not treated as fabrication, and this is not a complete expert re-verification of every historical claim |
 | PDF compilation | UNAVAILABLE | `pdflatex` is not installed; LaTeX sources were generated, but PDF compilation was not claimed |
 | Author-side metadata | BLOCKED | Author name, affiliation, postal/corresponding details, email, date, funding, competing interests, CRediT, submission exclusivity, AI declaration confirmation, and archival DOI require author input |
+
+## PR test-mode evidence
+
+The full public-branch pipeline was run again after PR creation:
+
+```text
+Validated canonical row counts, expected outputs, and public-only paths.
+TEST1_EXIT=0
+TEST1_SECONDS=596
+```
+
+The generated-output assertions returned:
+
+```text
+records=96; variable_metadata=16; source_rows=480
+public_dataset_applicability=96; url_rows=140; numeric_rows=2396
+statistical_result_literal blockers=0
+DOCX: abstract_words=241, inline_shapes=4, tables=4
+PPTX: slides=4, slides_with_CJK_text=0
+citations=13, bibliography_entries=13, figure/table_labels=8
+pipeline_scripts=13
+TEST2_EXIT=0
+```
+
+The deliberate regression probe returned:
+
+```text
+RuntimeError: data/polity_period_records.csv: expected 96 rows, found 95
+PASS restored input accepted
+TEST3_EXIT=0
+```
+
+An initial artifact-check assertion used a stale internal LaTeX label name
+(`fig:regression`). Inspection showed the generated manuscript consistently
+uses `fig:forest-plot`; the test expectation was corrected and the complete
+artifact check then passed. No repository code change was required.
 
 ## Reproduction determinism
 
